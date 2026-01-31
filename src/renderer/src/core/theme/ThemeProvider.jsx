@@ -1,18 +1,20 @@
 /**
- * THEME PROVIDER
+ * THEME PROVIDER (ACTUALIZADO)
  * 
  * Proveedor de contexto para el sistema de temas.
- * Permite que cualquier componente acceda y modifique el tema actual.
+ * Ahora integrado con el sistema de imágenes de fondo.
  * 
  * Implementa:
  * - Context API de React
  * - Persistencia en localStorage
+ * - Gestión de imágenes de fondo
  * - Detección de cambios
  */
 
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { darkTheme, lightTheme, createCustomTheme, getThemeByName } from './themes';
 import { STORAGE_KEYS, THEME_NAMES } from '../config/constants';
+import { backgroundImageService } from '../services/BackgroundImageService';
 
 // Crear contexto
 export const ThemeContext = createContext();
@@ -27,12 +29,16 @@ export const ThemeProvider = ({ children }) => {
   
   // Estado para configuraciones personalizadas
   const [customConfig, setCustomConfig] = useState(null);
+  
+  // Estado para imagen de fondo activa
+  const [backgroundImage, setBackgroundImage] = useState(null);
 
   /**
    * Cargar tema desde localStorage al iniciar
    */
   useEffect(() => {
     loadThemeFromStorage();
+    loadBackgroundImage();
   }, []);
 
   /**
@@ -41,6 +47,27 @@ export const ThemeProvider = ({ children }) => {
   useEffect(() => {
     saveThemeToStorage();
   }, [currentTheme, themeName, customConfig]);
+
+  /**
+   * Actualizar tema cuando cambie la imagen de fondo
+   */
+  useEffect(() => {
+    if (backgroundImage !== null) {
+      updateThemeWithBackground(backgroundImage);
+    }
+  }, [backgroundImage]);
+
+  /**
+   * Cargar imagen de fondo guardada
+   */
+  const loadBackgroundImage = () => {
+    try {
+      const savedBackground = backgroundImageService.getActiveImage();
+      setBackgroundImage(savedBackground);
+    } catch (error) {
+      console.error('Error al cargar imagen de fondo:', error);
+    }
+  };
 
   /**
    * Cargar configuración guardada
@@ -69,7 +96,6 @@ export const ThemeProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error al cargar tema desde localStorage:', error);
-      // Si hay error, usar tema por defecto
       setCurrentTheme(darkTheme);
       setThemeName(THEME_NAMES.DARK);
     }
@@ -91,14 +117,44 @@ export const ThemeProvider = ({ children }) => {
   };
 
   /**
+   * Actualizar tema con imagen de fondo
+   */
+  const updateThemeWithBackground = (imageUrl) => {
+    const newConfig = {
+      ...customConfig,
+      backgroundImage: imageUrl
+    };
+    
+    const newTheme = createCustomTheme(newConfig);
+    setCurrentTheme(newTheme);
+    
+    // Si estamos usando un tema predefinido, cambiar a custom
+    if (themeName !== THEME_NAMES.CUSTOM) {
+      setThemeName(THEME_NAMES.CUSTOM);
+      setCustomConfig(newConfig);
+    }
+  };
+
+  /**
    * Cambiar a un tema predefinido
    */
   const changeTheme = useCallback((newThemeName) => {
     const theme = getThemeByName(newThemeName);
-    setCurrentTheme(theme);
+    
+    // Mantener la imagen de fondo si existe
+    if (backgroundImage) {
+      const themeWithBackground = createCustomTheme({
+        ...theme,
+        backgroundImage
+      });
+      setCurrentTheme(themeWithBackground);
+    } else {
+      setCurrentTheme(theme);
+    }
+    
     setThemeName(newThemeName);
-    setCustomConfig(null); // Limpiar configuración personalizada
-  }, []);
+    setCustomConfig(null);
+  }, [backgroundImage]);
 
   /**
    * Actualizar configuración personalizada
@@ -119,10 +175,11 @@ export const ThemeProvider = ({ children }) => {
       colors: {
         ...(customConfig?.colors || currentTheme.colors),
         [colorKey]: colorValue
-      }
+      },
+      backgroundImage
     };
     updateCustomTheme(newConfig);
-  }, [customConfig, currentTheme, updateCustomTheme]);
+  }, [customConfig, currentTheme, backgroundImage, updateCustomTheme]);
 
   /**
    * Actualizar fuente
@@ -133,10 +190,11 @@ export const ThemeProvider = ({ children }) => {
       fonts: {
         ...(customConfig?.fonts || currentTheme.fonts),
         [fontType]: fontValue
-      }
+      },
+      backgroundImage
     };
     updateCustomTheme(newConfig);
-  }, [customConfig, currentTheme, updateCustomTheme]);
+  }, [customConfig, currentTheme, backgroundImage, updateCustomTheme]);
 
   /**
    * Actualizar tamaño de texto
@@ -147,18 +205,37 @@ export const ThemeProvider = ({ children }) => {
       sizes: {
         ...(customConfig?.sizes || currentTheme.sizes),
         [sizeKey]: sizeValue
-      }
+      },
+      backgroundImage
     };
     updateCustomTheme(newConfig);
-  }, [customConfig, currentTheme, updateCustomTheme]);
+  }, [customConfig, currentTheme, backgroundImage, updateCustomTheme]);
 
   /**
    * Actualizar imagen de fondo
    */
   const updateBackgroundImage = useCallback((imageUrl) => {
+    setBackgroundImage(imageUrl);
+    backgroundImageService.setActiveImage(imageUrl);
+    
     const newConfig = {
       ...customConfig,
       backgroundImage: imageUrl
+    };
+    updateCustomTheme(newConfig);
+  }, [customConfig, updateCustomTheme]);
+
+  /**
+   * Limpiar imagen de fondo
+   */
+  const clearBackgroundImage = useCallback(() => {
+    setBackgroundImage(null);
+    backgroundImageService.setActiveImage(null);
+    
+    // Actualizar tema sin imagen
+    const newConfig = {
+      ...customConfig,
+      backgroundImage: null
     };
     updateCustomTheme(newConfig);
   }, [customConfig, updateCustomTheme]);
@@ -170,7 +247,9 @@ export const ThemeProvider = ({ children }) => {
     setCurrentTheme(darkTheme);
     setThemeName(THEME_NAMES.DARK);
     setCustomConfig(null);
+    setBackgroundImage(null);
     localStorage.removeItem(STORAGE_KEYS.USER_CONFIG);
+    backgroundImageService.setActiveImage(null);
   }, []);
 
   // Valor del contexto
@@ -178,12 +257,14 @@ export const ThemeProvider = ({ children }) => {
     theme: currentTheme,
     themeName,
     customConfig,
+    backgroundImage,
     changeTheme,
     updateCustomTheme,
     updateColor,
     updateFont,
     updateSize,
     updateBackgroundImage,
+    clearBackgroundImage,
     resetTheme,
     availableThemes: [
       { name: THEME_NAMES.DARK, label: 'Oscuro' },

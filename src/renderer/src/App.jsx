@@ -1,15 +1,11 @@
 /**
- * COMPONENTE PRINCIPAL: App
+ * COMPONENTE PRINCIPAL: App (ACTUALIZADO)
  * 
- * Orquesta todos los componentes y features.
- * Ahora es mucho más limpio y mantenible.
- * 
- * Mejoras implementadas:
- * - Separación de responsabilidades
- * - Componentes reutilizables
- * - Hooks personalizados
- * - Sistema de temas
- * - Mejor manejo de estados
+ * Ahora incluye:
+ * - Sistema de temas completo
+ * - Galería de fondos
+ * - Configuración rápida
+ * - Exportación avanzada
  */
 
 import React from 'react';
@@ -19,6 +15,7 @@ import { useAttendance } from './features/attendance/hooks/useAttendanceForm';
 import { useImageExport } from './core/hooks/useImageExport';
 import { AttendanceForm } from './features/attendance/components/AttendanceForm';
 import { SlidePreview } from './features/slide-generator/components/SlidePreview';
+import { QuickSettings } from './features/settings/components/QuickSettings';
 import { DEFAULT_RESOLUTION } from './core/config/constants';
 import './App.css';
 
@@ -37,50 +34,57 @@ const AppContent = () => {
     const result = await exportImage('slide-preview', {
       filename: `Asistencia-${new Date().toLocaleDateString().replace(/\//g, '-')}.png`,
       width: DEFAULT_RESOLUTION.width,
-      height: DEFAULT_RESOLUTION.height
+      height: DEFAULT_RESOLUTION.height,
+      quality: 0.95,
+      pixelRatio: 2
     });
 
     if (result.success) {
-      console.log('Imagen exportada correctamente');
+      alert('✅ ¡Imagen exportada correctamente!');
     } else {
-      alert('Error al exportar imagen: ' + result.error);
+      alert('❌ Error al exportar imagen: ' + result.error);
     }
   };
 
   return (
-    <div className="app-container">
-      {/* Panel de control izquierdo */}
-      <AttendanceForm
-        data={attendance.data}
-        total={attendance.total}
-        onFieldChange={attendance.updateField}
-        onSave={attendance.save}
-        onExport={handleExport}
-        isSaving={attendance.isSaving || isExporting}
-      />
+    <>
+      <div className="app-container">
+        {/* Panel de control izquierdo */}
+        <AttendanceForm
+          data={attendance.data}
+          total={attendance.total}
+          onFieldChange={attendance.updateField}
+          onSave={attendance.save}
+          onExport={handleExport}
+          isSaving={attendance.isSaving || isExporting}
+        />
 
-      {/* Vista previa del slide derecho */}
-      <SlidePreview
-        data={attendance.getFormattedData()}
-        total={attendance.total}
-        theme={theme}
-        resolution={DEFAULT_RESOLUTION}
-        id="slide-preview"
-      />
+        {/* Vista previa del slide derecho */}
+        <SlidePreview
+          data={attendance.getFormattedData()}
+          total={attendance.total}
+          theme={theme}
+          resolution={DEFAULT_RESOLUTION}
+          id="slide-preview"
+        />
+      </div>
+
+      {/* Panel de configuración rápida (flotante) */}
+      <QuickSettings />
 
       {/* Mostrar errores si existen */}
       {exportError && (
         <div className="error-toast">
-          Error al exportar: {exportError}
+          ❌ Error al exportar: {exportError}
         </div>
       )}
       
       {attendance.saveError && (
         <div className="error-toast">
-          Error al guardar: {attendance.saveError}
+          ❌ Error al guardar: {attendance.saveError}
         </div>
       )}
-    </div>
+    </>
   );
 };
 

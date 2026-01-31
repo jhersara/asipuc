@@ -1,0 +1,250 @@
+/**
+ * ESTILOS: QuickSettings
+ * 
+ * Panel flotante de configuración rápida
+ */
+
+/* ========================================
+   CONTAINER
+   ======================================== */
+.quick-settings {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 900;
+}
+
+/* ========================================
+   TOGGLE BUTTON
+   ======================================== */
+.settings-toggle {
+  background: #007bff;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-toggle:hover {
+  background: #0056b3;
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.quick-settings.expanded .settings-toggle {
+  background: #dc3545;
+}
+
+.quick-settings.expanded .settings-toggle:hover {
+  background: #c82333;
+}
+
+/* ========================================
+   SETTINGS PANEL
+   ======================================== */
+.settings-panel {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  background: #2a2a2a;
+  border-radius: 12px;
+  padding: 20px;
+  width: 320px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.settings-title {
+  margin: 0 0 20px 0;
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  border-bottom: 2px solid #444;
+  padding-bottom: 10px;
+}
+
+/* ========================================
+   SETTING GROUPS
+   ======================================== */
+.setting-group {
+  margin-bottom: 20px;
+}
+
+.setting-label {
+  display: block;
+  color: #ccc;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ========================================
+   THEME BUTTONS
+   ======================================== */
+.theme-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.theme-btn {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #444;
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.theme-btn:hover {
+  border-color: #007bff;
+  background: #222;
+}
+
+.theme-btn.active {
+  background: #007bff;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+}
+
+/* ========================================
+   GALLERY BUTTON
+   ======================================== */
+.btn-open-gallery {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-open-gallery:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+/* ========================================
+   SELECT
+   ======================================== */
+.setting-select {
+  width: 100%;
+  padding: 10px;
+  background: #1a1a1a;
+  border: 2px solid #444;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.setting-select:hover {
+  border-color: #007bff;
+}
+
+.setting-select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+
+/* ========================================
+   SIZE BUTTONS
+   ======================================== */
+.size-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.size-btn {
+  padding: 8px;
+  border: 2px solid #444;
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.size-btn:hover {
+  border-color: #007bff;
+  background: #222;
+}
+
+.size-btn.active {
+  background: #28a745;
+  border-color: #28a745;
+  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.3);
+}
+
+/* ========================================
+   INFO
+   ======================================== */
+.settings-info {
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(0, 123, 255, 0.1);
+  border-left: 3px solid #007bff;
+  border-radius: 4px;
+}
+
+.settings-info small {
+  color: #b3d9ff;
+  font-size: 12px;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 768px) {
+  .quick-settings {
+    top: 10px;
+    right: 10px;
+  }
+
+  .settings-panel {
+    width: calc(100vw - 40px);
+    right: -10px;
+  }
+
+  .settings-toggle {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+  }
+}

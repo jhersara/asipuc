@@ -78,7 +78,10 @@ export const IMAGE_QUALITY = {
 export const STORAGE_KEYS = {
   THEME: 'asipuc_theme',
   USER_CONFIG: 'asipuc_user_config',
-  LAST_ATTENDANCE: 'asipuc_last_attendance'
+  LAST_ATTENDANCE: 'asipuc_last_attendance',
+  CUSTOM_BACKGROUNDS: 'asipuc_custom_backgrounds',
+  ACTIVE_BACKGROUND: 'asipuc_active_background',
+  DEFAULT_BACKGROUNDS: 'asipuc_default_backgrounds'
 };
 
 // Nombres de temas
@@ -86,4 +89,57 @@ export const THEME_NAMES = {
   DARK: 'dark',
   LIGHT: 'light',
   CUSTOM: 'custom'
+};
+
+// Imágenes de fondo predefinidas
+// NOTA: En producción, estas rutas apuntarían a archivos en /resources
+export const DEFAULT_BACKGROUNDS = [
+  {
+    id: 'default_1',
+    name: 'Fondo Iglesia Clásico',
+    thumbnail: '/backgrounds/thumbnails/church_classic.jpg',
+    fullImage: '/backgrounds/church_classic.jpg',
+    category: 'religious'
+  },
+  {
+    id: 'default_2',
+    name: 'Vidriera Colorida',
+    thumbnail: '/backgrounds/thumbnails/stained_glass.jpg',
+    fullImage: '/backgrounds/stained_glass.jpg',
+    category: 'religious'
+  },
+  {
+    id: 'default_3',
+    name: 'Cruz Dorada',
+    thumbnail: '/backgrounds/thumbnails/golden_cross.jpg',
+    fullImage: '/backgrounds/golden_cross.jpg',
+    category: 'religious'
+  },
+  {
+    id: 'default_4',
+    name: 'Cielo Estrellado',
+    thumbnail: '/backgrounds/thumbnails/starry_sky.jpg',
+    fullImage: '/backgrounds/starry_sky.jpg',
+    category: 'nature'
+  },
+  {
+    id: 'default_5',
+    name: 'Gradiente Oscuro',
+    thumbnail: '/backgrounds/thumbnails/dark_gradient.jpg',
+    fullImage: '/backgrounds/dark_gradient.jpg',
+    category: 'abstract'
+  },
+  {
+    id: 'default_6',
+    name: 'Gradiente Claro',
+    thumbnail: '/backgrounds/thumbnails/light_gradient.jpg',
+    fullImage: '/backgrounds/light_gradient.jpg',
+    category: 'abstract'
+  }
+];
+
+// Formatos de exportación disponibles
+export const EXPORT_FORMATS = {
+  PNG: { value: 'png', label: 'PNG (sin pérdida)', extension: '.png' },
+  JPEG: { value: 'jpeg', label: 'JPEG (comprimido)', extension: '.jpg' }
 };
