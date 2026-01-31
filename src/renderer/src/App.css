@@ -1,140 +1,305 @@
-/* Reseteo básico */
+/**
+ * ESTILOS GLOBALES DE LA APLICACIÓN
+ * 
+ * Ahora con mejor organización y usando variables CSS
+ * para facilitar personalización futura.
+ */
+
+/* ========================================
+   VARIABLES CSS
+   ======================================== */
+:root {
+  --control-bg: #333;
+  --control-text: #ffffff;
+  --input-bg: #444;
+  --input-border: #666;
+  --primary-color: #007bff;
+  --primary-hover: #0056b3;
+  --success-color: #28a745;
+  --success-hover: #1e7e34;
+  --error-color: #dc3545;
+  --border-radius: 8px;
+  --transition-speed: 0.3s;
+}
+
+/* ========================================
+   RESET Y BASE
+   ======================================== */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Times New Roman', Times, serif; /* Fuente estilo clásico/iglesia */
 }
 
 body {
+  font-family: 'Times New Roman', Times, serif;
   background-color: #222;
   color: white;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  overflow: hidden;
 }
 
-/* Contenedor principal de la aplicación */
+#root {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ========================================
+   LAYOUT PRINCIPAL
+   ======================================== */
 .app-container {
   display: flex;
   gap: 20px;
   padding: 20px;
+  max-width: 100%;
+  height: 100vh;
+  align-items: center;
 }
 
-/* Panel de Control (Izquierda - Formulario) */
+/* ========================================
+   PANEL DE CONTROL (IZQUIERDA)
+   ======================================== */
 .control-panel {
-  background: #333;
+  background: var(--control-bg);
   padding: 20px;
-  border-radius: 8px;
-  width: 300px;
+  border-radius: var(--border-radius);
+  width: 320px;
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
   gap: 15px;
+  overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.panel-title {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: var(--control-text);
+}
+
+/* ========================================
+   INPUTS
+   ======================================== */
+.inputs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .input-group {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
 }
 
 .input-group label {
   font-size: 14px;
   font-weight: bold;
   text-transform: uppercase;
+  color: var(--control-text);
+  flex: 1;
 }
 
 .input-group input {
   width: 80px;
-  padding: 5px;
+  padding: 8px;
   font-size: 16px;
   text-align: center;
-}
-
-.btn-action {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px;
-  cursor: pointer;
-  font-weight: bold;
-  margin-top: 10px;
+  background: var(--input-bg);
+  color: var(--control-text);
+  border: 1px solid var(--input-border);
   border-radius: 4px;
+  transition: border-color var(--transition-speed);
 }
 
-.btn-action:hover { background-color: #0056b3; }
-
-/* --- DISEÑO DE LA PLANTILLA (Lo que se proyecta) --- */
-.slide-preview {
-  /* Tamaño fijo HD para que no se deforme al proyectar */
-  width: 1280px; 
-  height: 720px;
-  background-color: #000;
-  /* Aquí iría tu imagen de fondo real */
-  /* background-image: url('./assets/fondo.jpg'); */
-  /* background-size: cover; */
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 40px;
-  border: 1px solid #444; /* Borde solo para ver el límite en pantalla */
+.input-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
 }
 
-.header-title {
-  font-size: 100px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 5px;
-  margin-bottom: 40px;
-  text-shadow: 4px 4px 0px #333; /* Sombra estilo 3D */
-  color: white;
+.input-group input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-/* La tabla central con bordes blancos */
-.grid-container {
-  width: 90%;
-  border: 3px solid white;
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* Dos columnas */
+/* ========================================
+   DIVISOR
+   ======================================== */
+.divider {
+  margin: 10px 0;
+  border: none;
+  border-top: 1px solid var(--input-border);
 }
 
-/* Cada celda de la tabla */
-.grid-item {
+/* ========================================
+   DISPLAY DE TOTAL
+   ======================================== */
+.total-display {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 30px;
-  border-bottom: 2px solid white; /* Línea divisoria horizontal */
-  font-size: 45px;
+  font-size: 20px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.total-label {
+  font-weight: normal;
+}
+
+.total-value {
   font-weight: bold;
+  font-size: 24px;
+  color: var(--success-color);
 }
 
-/* Quitamos el borde inferior de los últimos elementos */
-.grid-item:nth-last-child(1),
-.grid-item:nth-last-child(2) {
-  border-bottom: none;
+/* ========================================
+   BOTONES
+   ======================================== */
+.actions-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-/* Línea vertical central (truco visual con borde derecho en los impares) */
-.grid-item:nth-child(odd) {
-  border-right: 2px solid white;
-}
-
-.label-text {
-  text-transform: uppercase;
-}
-
-.number-text {
-  font-family: Arial, sans-serif; /* Números más legibles */
-}
-
-.footer-total {
-  margin-top: auto; /* Empuja el total hacia abajo */
-  align-self: flex-start;
-  font-size: 90px;
+.btn-action {
+  width: 100%;
+  padding: 12px;
   font-weight: bold;
-  margin-left: 5%;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all var(--transition-speed);
   text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-action:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn-action:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-action:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+
+.btn-success {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+  background-color: var(--success-hover);
+}
+
+/* ========================================
+   PREVIEW DEL SLIDE (DERECHA)
+   ======================================== */
+.slide-preview-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+#slide-preview {
+  transform: scale(0.5);
+  transform-origin: center;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+/* ========================================
+   MENSAJES DE ERROR
+   ======================================== */
+.error-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--error-color);
+  color: white;
+  padding: 15px 20px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   SCROLLBAR PERSONALIZADO
+   ======================================== */
+.control-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.control-panel::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.control-panel::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+.control-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-hover);
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 1600px) {
+  #slide-preview {
+    transform: scale(0.4);
+  }
+}
+
+@media (max-width: 1200px) {
+  .app-container {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  
+  #slide-preview {
+    transform: scale(0.3);
+  }
 }
