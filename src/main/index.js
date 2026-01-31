@@ -2,6 +2,23 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import Database from 'better-sqlite3' // Importamos SQLite
+
+// 1. Configurar Base de datos
+// Se guarda en la carpeta de datos del usuario (AppDate) para persistencia
+const dbPath = join(app.getPath('userData'), 'iglesia_database.sqlite');
+const db = new Database(dbPath);
+
+// Crear tabla si no existe al iniciar
+db.exec(`
+  CREATE TABLE IF NOT EXISTS asistencia (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fecha TEXT,
+    ancianos INTEGER, adultos INTEGER, jovenes INTEGER,
+    adolescentes INTEGER, ninos INTEGER, visitas INTEGER,
+    total INTEGER
+  )
+`);
 
 function createWindow() {
   // Create the browser window.
@@ -49,8 +66,19 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
+  // IPC db
+  ipcMain.on('guardar-datos', (event, datos) => {
+    try{
+      const stmt = db.prepare(`
+        INSERT INTO asistencia (fecha, ancianos, adultos, jovenes, adolescentes, ninos, visitas, total)
+        VALUES (@fecha, @ancianos, @adultos, @jovenes, @adolescentes, @ninos, @visitas, @total)
+      `);
+      stmt.run(datos);
+      console.log("Registro guardado exitosamente en BD Local");
+    } catch (error){
+      console.error("Error al guardar en la base de datos", error);
+    }
+  });
 
   createWindow()
 

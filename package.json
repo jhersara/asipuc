@@ -20,7 +20,8 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
-    "better-sqlite3": "^12.6.2"
+    "better-sqlite3": "^12.6.2",
+    "html-to-image": "^1.11.13"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config": "^2.1.0",

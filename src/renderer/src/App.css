@@ -1,0 +1,140 @@
+/* Reseteo básico */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Times New Roman', Times, serif; /* Fuente estilo clásico/iglesia */
+}
+
+body {
+  background-color: #222;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Contenedor principal de la aplicación */
+.app-container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Panel de Control (Izquierda - Formulario) */
+.control-panel {
+  background: #333;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.input-group label {
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.input-group input {
+  width: 80px;
+  padding: 5px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.btn-action {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 10px;
+  border-radius: 4px;
+}
+
+.btn-action:hover { background-color: #0056b3; }
+
+/* --- DISEÑO DE LA PLANTILLA (Lo que se proyecta) --- */
+.slide-preview {
+  /* Tamaño fijo HD para que no se deforme al proyectar */
+  width: 1280px; 
+  height: 720px;
+  background-color: #000;
+  /* Aquí iría tu imagen de fondo real */
+  /* background-image: url('./assets/fondo.jpg'); */
+  /* background-size: cover; */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  border: 1px solid #444; /* Borde solo para ver el límite en pantalla */
+}
+
+.header-title {
+  font-size: 100px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 5px;
+  margin-bottom: 40px;
+  text-shadow: 4px 4px 0px #333; /* Sombra estilo 3D */
+  color: white;
+}
+
+/* La tabla central con bordes blancos */
+.grid-container {
+  width: 90%;
+  border: 3px solid white;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Dos columnas */
+}
+
+/* Cada celda de la tabla */
+.grid-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  border-bottom: 2px solid white; /* Línea divisoria horizontal */
+  font-size: 45px;
+  font-weight: bold;
+}
+
+/* Quitamos el borde inferior de los últimos elementos */
+.grid-item:nth-last-child(1),
+.grid-item:nth-last-child(2) {
+  border-bottom: none;
+}
+
+/* Línea vertical central (truco visual con borde derecho en los impares) */
+.grid-item:nth-child(odd) {
+  border-right: 2px solid white;
+}
+
+.label-text {
+  text-transform: uppercase;
+}
+
+.number-text {
+  font-family: Arial, sans-serif; /* Números más legibles */
+}
+
+.footer-total {
+  margin-top: auto; /* Empuja el total hacia abajo */
+  align-self: flex-start;
+  font-size: 90px;
+  font-weight: bold;
+  margin-left: 5%;
+  text-transform: uppercase;
+}
