@@ -5,33 +5,6 @@
  * Siguiendo el principio DRY (Don't Repeat Yourself).
  */
 
-// ========================================
-// PALETA DE COLORES OFICIAL
-// ========================================
-export const BRAND_COLORS = {
-  // Colores principales (basados en la UI proporcionada)
-  PRIMARY_YELLOW: '#f68d13',
-  PRIMARY_BLUE_DARK: '#111835',
-  PRIMARY_BLUE: '#0248c1',
-  PRIMARY_WHITE: '#fbfcfc',
-  
-  // Colores secundarios
-  ACCENT_PURPLE: '#6c5ce7',
-  ACCENT_PINK: '#fd79a8',
-  ACCENT_GREEN: '#00b894',
-  
-  // Grises
-  GRAY_900: '#1a1a2e',
-  GRAY_800: '#16213e',
-  GRAY_700: '#2d3561',
-  GRAY_600: '#3f4b7a',
-  GRAY_500: '#6c7a9b',
-  GRAY_400: '#94a3b8',
-  GRAY_300: '#cbd5e1',
-  GRAY_200: '#e2e8f0',
-  GRAY_100: '#f1f5f9'
-};
-
 // Resoluciones de exportación
 export const IMAGE_RESOLUTIONS = {
   HD: { width: 1280, height: 720, label: 'HD (1280x720)' },
@@ -45,31 +18,46 @@ export const DEFAULT_RESOLUTION = IMAGE_RESOLUTIONS.FULL_HD;
 
 // Categorías de asistencia
 export const ATTENDANCE_CATEGORIES = [
-  { key: 'ancianos', label: 'ANCIANO', labelPlural: 'ANCIANOS', order: 1 },
-  { key: 'adultos', label: 'ADULTO', labelPlural: 'ADULTOS', order: 2 },
-  { key: 'jovenes', label: 'JOVEN', labelPlural: 'JÓVENES', order: 3 },
-  { key: 'adolescentes', label: 'ADOLESCENTE', labelPlural: 'ADOLESCENTES', order: 4 },
-  { key: 'ninos', label: 'NIÑO', labelPlural: 'NIÑOS', order: 5 },
-  { key: 'visitas', label: 'VISITA', labelPlural: 'VISITAS', order: 6 }
+  { key: 'ancianos', label: 'ANCIANO', order: 1 },
+  { key: 'adultos', label: 'ADULTOS', order: 2 },
+  { key: 'jovenes', label: 'JÓVENES', order: 3 },
+  { key: 'adolescentes', label: 'ADOLESCENTES', order: 4 },
+  { key: 'ninos', label: 'NIÑOS', order: 5 },
+  { key: 'visitas', label: 'VISITAS', order: 6 }
 ];
 
-// Fuentes disponibles (personalizadas)
-export const AVAILABLE_FONTS = [
-  // Fuentes del sistema
-  { value: 'Times New Roman, serif', label: 'Times New Roman', category: 'serif', isCustom: false },
-  { value: 'Georgia, serif', label: 'Georgia', category: 'serif', isCustom: false },
-  { value: 'Arial, sans-serif', label: 'Arial', category: 'sans-serif', isCustom: false },
-  { value: 'Helvetica, sans-serif', label: 'Helvetica', category: 'sans-serif', isCustom: false },
-  { value: 'Verdana, sans-serif', label: 'Verdana', category: 'sans-serif', isCustom: false },
-  
-  // Fuentes personalizadas (el usuario las descargará)
-  { value: 'Montserrat, sans-serif', label: 'Montserrat', category: 'sans-serif', isCustom: true },
-  { value: 'Roboto, sans-serif', label: 'Roboto', category: 'sans-serif', isCustom: true },
-  { value: 'Poppins, sans-serif', label: 'Poppins', category: 'sans-serif', isCustom: true },
-  { value: 'Bebas Neue, sans-serif', label: 'Bebas Neue', category: 'display', isCustom: true },
-  { value: 'Anton, sans-serif', label: 'Anton', category: 'display', isCustom: true },
-  { value: 'Oswald, sans-serif', label: 'Oswald', category: 'sans-serif', isCustom: true }
+// Fuentes del sistema (web safe fonts)
+export const SYSTEM_FONTS = [
+  { value: 'Impact, sans-serif', label: 'Impact', category: 'display', weight: '900' },
+  { value: 'Arial Black, sans-serif', label: 'Arial Black', category: 'sans-serif', weight: '900' },
+  { value: 'Times New Roman, serif', label: 'Times New Roman', category: 'serif', weight: 'normal' },
+  { value: 'Georgia, serif', label: 'Georgia', category: 'serif', weight: 'normal' },
+  { value: 'Arial, sans-serif', label: 'Arial', category: 'sans-serif', weight: 'normal' },
+  { value: 'Helvetica, sans-serif', label: 'Helvetica', category: 'sans-serif', weight: 'normal' },
+  { value: 'Verdana, sans-serif', label: 'Verdana', category: 'sans-serif', weight: 'normal' },
+  { value: 'Courier New, monospace', label: 'Courier New', category: 'monospace', weight: 'normal' }
 ];
+
+// Rutas de recursos del sistema
+export const SYSTEM_PATHS = {
+  FONTS: 'resources/assets/fonts',
+  BACKGROUNDS: 'resources/assets/backgrounds',
+  LOGOS: 'resources/assets/logos'
+};
+
+// Rutas de recursos del usuario
+export const USER_PATHS = {
+  FONTS: 'resources/user-uploads/fonts',
+  BACKGROUNDS: 'resources/user-uploads/backgrounds',
+  LOGOS: 'resources/user-uploads/logos'
+};
+
+// Formatos de archivo soportados
+export const SUPPORTED_FORMATS = {
+  FONTS: ['.ttf', '.otf', '.woff', '.woff2'],
+  IMAGES: ['.jpg', '.jpeg', '.png', '.webp'],
+  LOGOS: ['.png', '.svg']
+};
 
 // Tamaños de texto predefinidos (ajustados para 1920x1080)
 export const TEXT_SIZES = {
@@ -80,22 +68,28 @@ export const TEXT_SIZES = {
     xlarge: '140px'
   },
   LABEL: {
-    small: '36px',
-    medium: '45px',
-    large: '54px',
-    xlarge: '63px'
-  },
-  NUMBER: {
     small: '40px',
     medium: '50px',
     large: '60px',
     xlarge: '70px'
   },
+  NUMBER: {
+    small: '50px',
+    medium: '60px',
+    large: '70px',
+    xlarge: '80px'
+  },
   TOTAL: {
-    small: '80px',
-    medium: '100px',
-    large: '120px',
-    xlarge: '140px'
+    small: '90px',
+    medium: '110px',
+    large: '130px',
+    xlarge: '150px'
+  },
+  HASHTAG: {
+    small: '24px',
+    medium: '30px',
+    large: '36px',
+    xlarge: '42px'
   }
 };
 
@@ -107,64 +101,69 @@ export const IMAGE_QUALITY = {
   MAXIMUM: 1.0
 };
 
-export const IMAGE_QUALITY_OPTIONS = [
-  { value: IMAGE_QUALITY.MEDIUM, label: 'Media (85%)', recommended: false },
-  { value: IMAGE_QUALITY.HIGH, label: 'Alta (95%)', recommended: true },
-  { value: IMAGE_QUALITY.MAXIMUM, label: 'Máxima (100%)', recommended: false }
-];
-
-// Formatos de exportación
-export const EXPORT_FORMATS = {
-  PNG: 'png',
-  JPEG: 'jpeg'
-};
-
-export const EXPORT_FORMAT_OPTIONS = [
-  { value: EXPORT_FORMATS.PNG, label: 'PNG (Recomendado)', extension: '.png' },
-  { value: EXPORT_FORMATS.JPEG, label: 'JPEG', extension: '.jpg' }
-];
-
 // Configuración de localStorage
 export const STORAGE_KEYS = {
   THEME: 'asipuc_theme',
   USER_CONFIG: 'asipuc_user_config',
   LAST_ATTENDANCE: 'asipuc_last_attendance',
-  EXPORT_SETTINGS: 'asipuc_export_settings',
-  CUSTOM_BACKGROUNDS: 'asipuc_custom_backgrounds',
-  CUSTOM_LOGOS: 'asipuc_custom_logos'
+  EXPORT_SETTINGS: 'asipuc_export_settings'
 };
 
 // Nombres de temas
 export const THEME_NAMES = {
   DARK: 'dark',
   LIGHT: 'light',
-  CUSTOM: 'custom',
-  MODERN: 'modern' // Nuevo tema moderno
+  CUSTOM: 'custom'
 };
 
-// Rutas de recursos
-export const RESOURCE_PATHS = {
-  FONTS: '/resources/fonts',
-  BACKGROUNDS: '/resources/backgrounds',
-  LOGOS: '/resources/logos'
+// Formatos de exportación
+export const EXPORT_FORMATS = {
+  PNG: { value: 'png', label: 'PNG (Mejor calidad)', extension: '.png' },
+  JPEG: { value: 'jpeg', label: 'JPEG (Menor tamaño)', extension: '.jpg' }
 };
 
-// Configuración de logos
-export const LOGO_CONFIG = {
-  MAX_SIZE: 5 * 1024 * 1024, // 5MB
-  ALLOWED_TYPES: ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'],
-  POSITIONS: {
-    TOP_LEFT: 'top-left',
-    TOP_RIGHT: 'top-right',
-    BOTTOM_LEFT: 'bottom-left',
-    BOTTOM_RIGHT: 'bottom-right'
+// Opciones de calidad
+export const QUALITY_OPTIONS = [
+  { value: IMAGE_QUALITY.MAXIMUM, label: 'Máxima (100%)', speed: 'slow' },
+  { value: IMAGE_QUALITY.HIGH, label: 'Alta (95%)', speed: 'medium' },
+  { value: IMAGE_QUALITY.MEDIUM, label: 'Media (85%)', speed: 'fast' },
+  { value: IMAGE_QUALITY.LOW, label: 'Baja (70%)', speed: 'fastest' }
+];
+
+// Tamaños máximos de archivo (en bytes)
+export const MAX_FILE_SIZES = {
+  FONT: 5 * 1024 * 1024, // 5MB
+  IMAGE: 10 * 1024 * 1024, // 10MB
+  LOGO: 5 * 1024 * 1024 // 5MB
+};
+
+// Posiciones de logos en el slide
+export const LOGO_POSITIONS = {
+  TOP_LEFT: 'top-left',
+  TOP_RIGHT: 'top-right',
+  BOTTOM_LEFT: 'bottom-left',
+  BOTTOM_RIGHT: 'bottom-right'
+};
+
+// Configuración por defecto de logos
+export const DEFAULT_LOGO_CONFIG = {
+  mainLogo: {
+    position: LOGO_POSITIONS.TOP_LEFT,
+    size: 150,
+    offsetX: 40,
+    offsetY: 40
   },
-  DEFAULT_SIZE: 120 // px
-};
-
-// Configuración de fondos
-export const BACKGROUND_CONFIG = {
-  MAX_SIZE: 10 * 1024 * 1024, // 10MB
-  ALLOWED_TYPES: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-  RECOMMENDED_RESOLUTION: DEFAULT_RESOLUTION
+  secondaryLogo: {
+    position: LOGO_POSITIONS.TOP_RIGHT,
+    size: 150,
+    offsetX: 40,
+    offsetY: 40
+  },
+  watermark: {
+    position: LOGO_POSITIONS.BOTTOM_RIGHT,
+    size: 180,
+    offsetX: 40,
+    offsetY: 40,
+    opacity: 1
+  }
 };

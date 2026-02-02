@@ -1,120 +1,165 @@
-# 📁 RECURSOS DE LA APLICACIÓN
+# 📁 ESTRUCTURA DE RECURSOS
 
-Esta carpeta contiene todos los recursos personalizables de la aplicación.
+Esta carpeta contiene todos los recursos estáticos de la aplicación.
 
----
+## 📂 Estructura
 
-## 📂 ESTRUCTURA DE CARPETAS
-
-### 1. **`/fonts`** - Fuentes personalizadas
-Coloca aquí tus archivos de fuentes (.ttf, .otf, .woff, .woff2)
-
-**Ejemplo de estructura:**
 ```
-fonts/
-  ├── Montserrat-Bold.ttf
-  ├── Montserrat-Regular.ttf
-  ├── Roboto-Bold.ttf
-  └── Roboto-Regular.ttf
-```
-
-**Fuentes recomendadas para descargar:**
-- **Montserrat**: https://fonts.google.com/specimen/Montserrat
-- **Roboto**: https://fonts.google.com/specimen/Roboto
-- **Poppins**: https://fonts.google.com/specimen/Poppins
-- **Bebas Neue**: https://fonts.google.com/specimen/Bebas+Neue (Para títulos grandes)
-- **Anton**: https://fonts.google.com/specimen/Anton (Para impacto visual)
-
----
-
-### 2. **`/backgrounds`** - Imágenes de fondo
-Coloca aquí las imágenes de fondo para los slides
-
-**Requisitos:**
-- Resolución recomendada: 1920x1080px (Full HD) o superior
-- Formatos soportados: .jpg, .jpeg, .png, .webp
-- Tamaño máximo: 5MB por imagen
-
-**Ejemplo:**
-```
-backgrounds/
-  ├── fondo-principal.jpg
-  ├── fondo-navidad.jpg
-  ├── fondo-semana-santa.jpg
-  └── textura-oscura.png
-```
-
-**Imágenes sugeridas:**
-- Texturas oscuras con estrellas (estilo espacial)
-- Fondos con cruces o símbolos religiosos
-- Gradientes oscuros elegantes
-- Imágenes de iglesia difuminadas
-
----
-
-### 3. **`/logos`** - Logos de la iglesia
-Coloca aquí los logos que aparecerán en los slides
-
-**Requisitos:**
-- Formato PNG con fondo transparente (recomendado)
-- Tamaño recomendado: 512x512px o mayor
-- Mantener buena calidad
-
-**Ejemplo:**
-```
-logos/
-  ├── logo-principal.png
-  ├── logo-blanco.png
-  └── logo-color.png
+resources/
+├── assets/                    # Recursos del sistema (incluidos en la app)
+│   ├── fonts/                # Fuentes incluidas por defecto
+│   ├── backgrounds/          # Imágenes de fondo predeterminadas
+│   └── logos/                # Logos de la iglesia/organización
+│
+└── user-uploads/             # Recursos subidos por el usuario
+    ├── fonts/                # Fuentes personalizadas del usuario
+    ├── backgrounds/          # Fondos personalizados del usuario
+    └── logos/                # Logos personalizados del usuario
 ```
 
 ---
 
-## 🎨 CÓMO USAR LOS RECURSOS
+## 🎨 CÓMO AGREGAR RECURSOS DEL SISTEMA
 
-### Opción 1: Recursos del sistema (Pre-instalados)
-1. Coloca tus archivos en las carpetas correspondientes
-2. Reinicia la aplicación
-3. Estarán disponibles automáticamente
+### 1. Fuentes (resources/assets/fonts/)
 
-### Opción 2: Subir desde la aplicación
-1. Usa el panel de configuración dentro de la app
-2. Haz clic en "Subir imagen de fondo" o "Subir logo"
-3. Selecciona el archivo desde tu computadora
-4. La app lo copiará automáticamente
+**Formatos soportados**: `.ttf`, `.otf`, `.woff`, `.woff2`
 
----
+**Instrucciones**:
+1. Descarga las fuentes que quieras incluir
+2. Copia los archivos a: `resources/assets/fonts/`
+3. Ejemplo de nombres:
+   - `Impact-Regular.ttf`
+   - `Bebas-Regular.ttf`
+   - `Oswald-Bold.ttf`
+   - `Anton-Regular.ttf`
 
-## 📋 CHECKLIST DE INSTALACIÓN
+**Fuentes recomendadas para títulos grandes**:
+- Impact (muy usada en diseños de iglesia)
+- Bebas Neue (moderna y legible)
+- Oswald (profesional)
+- Anton (bold y llamativa)
+- Montserrat Black (versátil)
 
-- [ ] Descargar fuentes de Google Fonts
-- [ ] Crear o descargar imagen de fondo 1920x1080
-- [ ] Preparar logos en PNG transparente
-- [ ] Copiar archivos a las carpetas correspondientes
-- [ ] Reiniciar aplicación
-
----
-
-## 🔗 RECURSOS ÚTILES
-
-### Fuentes Gratuitas:
+**Dónde descargar**:
 - Google Fonts: https://fonts.google.com
-- Font Squirrel: https://www.fontsquirrel.com
 - DaFont: https://www.dafont.com
 
-### Imágenes de fondo:
+---
+
+### 2. Imágenes de Fondo (resources/assets/backgrounds/)
+
+**Formatos soportados**: `.jpg`, `.jpeg`, `.png`, `.webp`
+
+**Recomendaciones**:
+- Resolución mínima: 1920x1080px
+- Resolución recomendada: 3840x2160px (para mejor calidad)
+- Peso máximo recomendado: 5MB por imagen
+- Preferir JPG para fotos (menor tamaño)
+
+**Instrucciones**:
+1. Coloca tus imágenes de fondo en: `resources/assets/backgrounds/`
+2. Ejemplos de nombres:
+   - `galaxy-background.jpg`
+   - `church-background.jpg`
+   - `abstract-gold.jpg`
+   - `gradient-blue.jpg`
+
+**Tipos de fondos recomendados**:
+- Galaxias/espaciales (como el ejemplo)
+- Texturas abstractas
+- Degradados
+- Imágenes con overlay oscuro para mejor legibilidad
+
+**Dónde descargar fondos gratuitos**:
 - Unsplash: https://unsplash.com
 - Pexels: https://www.pexels.com
 - Pixabay: https://pixabay.com
 
-### Texturas:
-- Subtle Patterns: https://www.toptal.com/designers/subtlepatterns/
+---
+
+### 3. Logos (resources/assets/logos/)
+
+**Formatos soportados**: `.png`, `.svg` (PNG con transparencia recomendado)
+
+**Recomendaciones**:
+- Usar PNG con fondo transparente
+- Resolución mínima: 500x500px
+- Resolución recomendada: 1000x1000px o más
+
+**Instrucciones**:
+1. Coloca tus logos en: `resources/assets/logos/`
+2. Ejemplos de nombres:
+   - `church-logo.png` (logo principal izquierda)
+   - `ministry-logo.png` (logo secundario derecha)
+   - `watermark.png` (marca de agua inferior)
+
+**Posiciones en el slide**:
+- Logo principal: Esquina superior izquierda
+- Logo secundario: Esquina superior derecha
+- Marca de agua: Esquina inferior derecha
 
 ---
 
-## ⚠️ IMPORTANTE
+## 👤 RECURSOS DEL USUARIO
 
-- **NO** borres las carpetas, solo agrega contenido
-- Mantén nombres descriptivos sin espacios (usa guiones: `mi-fondo.jpg`)
-- Verifica que las imágenes sean de buena calidad
-- Las fuentes deben estar en formato web (.woff, .woff2) o desktop (.ttf, .otf)
+Los usuarios pueden subir sus propios recursos desde la interfaz de la aplicación.
+Estos se guardarán automáticamente en `resources/user-uploads/`.
+
+### Ventajas:
+- No requiere acceso al sistema de archivos
+- Gestión visual desde la app
+- Validación automática de formatos y tamaños
+- Preview antes de aplicar
+
+---
+
+## 📋 CHECKLIST INICIAL
+
+Para comenzar a usar la aplicación, sigue estos pasos:
+
+### Paso 1: Agregar Fuente Principal
+- [ ] Descarga la fuente "Impact" o "Bebas Neue"
+- [ ] Copia el archivo .ttf a `resources/assets/fonts/`
+
+### Paso 2: Agregar Fondo
+- [ ] Descarga una imagen de fondo tipo galaxia/espacial
+- [ ] Guárdala como `default-background.jpg` en `resources/assets/backgrounds/`
+- [ ] Asegúrate que sea 1920x1080px o mayor
+
+### Paso 3: Agregar Logos (Opcional)
+- [ ] Exporta el logo de tu iglesia como PNG transparente
+- [ ] Guárdalo como `church-logo.png` en `resources/assets/logos/`
+
+### Paso 4: Probar
+- [ ] Ejecuta `npm run dev`
+- [ ] Abre la aplicación
+- [ ] Ve a Configuración → Temas
+- [ ] Selecciona los recursos agregados
+
+---
+
+## 🔍 VERIFICAR RECURSOS CARGADOS
+
+La aplicación escaneará automáticamente estas carpetas al iniciar.
+Los recursos encontrados aparecerán en los selectores de la interfaz.
+
+---
+
+## ⚠️ NOTAS IMPORTANTES
+
+1. **No cambiar la estructura de carpetas** - La app espera esta organización
+2. **Nombres sin espacios** - Usa guiones: `mi-fondo.jpg` no `mi fondo.jpg`
+3. **Tamaños grandes** - Mejor calidad para exportación
+4. **Respaldo** - Guarda copias de tus recursos personalizados
+5. **Licencias** - Asegúrate de tener derechos sobre las imágenes/fuentes
+
+---
+
+## 🎯 PRÓXIMOS PASOS
+
+Una vez agregados los recursos:
+1. La app los detectará automáticamente
+2. Aparecerán en los selectores de configuración
+3. Podrás previsualizarlos antes de aplicarlos
+4. Se guardarán en tu configuración personalizada
