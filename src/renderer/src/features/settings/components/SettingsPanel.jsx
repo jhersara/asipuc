@@ -1,8 +1,7 @@
 /**
  * COMPONENTE: SettingsPanel
  * 
- * Panel principal de configuración con tabs.
- * Incluye nuevo tab de Templates.
+ * Panel principal de configuración con tabs extendidos.
  */
 
 import React, { useState } from 'react';
@@ -10,8 +9,11 @@ import { TemplateSelector } from './TemplateSelector';
 import { BackgroundSelector } from './BackgroundSelector';
 import { LogoConfigurator } from './LogoConfigurator';
 import { HashtagEditor } from './HashtagEditor';
+import { ThemeCustomizer } from './ThemeCustomizer';
+import { ConfigManager } from './ConfigManager';
 import './SettingsPanel.css';
 import './TemplateSelector.css';
+import './ThemeCustomizer.css';
 
 export const SettingsPanel = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState('template');
@@ -20,9 +22,11 @@ export const SettingsPanel = ({ isOpen, onClose }) => {
 
   const tabs = [
     { id: 'template', label: 'Diseño', icon: '🎨' },
+    { id: 'customize', label: 'Personalizar', icon: '🎯' },
     { id: 'background', label: 'Fondo', icon: '🖼️' },
     { id: 'logos', label: 'Logos', icon: '🏷️' },
-    { id: 'hashtag', label: 'Hashtag', icon: '#️⃣' }
+    { id: 'hashtag', label: 'Hashtag', icon: '#️⃣' },
+    { id: 'config', label: 'Guardar', icon: '💾' }
   ];
 
   return (
@@ -57,6 +61,7 @@ export const SettingsPanel = ({ isOpen, onClose }) => {
         {/* Content */}
         <div className="settings-content">
           {activeTab === 'template' && <TemplateSelector />}
+          {activeTab === 'customize' && <ThemeCustomizer />}
           {activeTab === 'background' && <BackgroundSelector />}
           
           {activeTab === 'logos' && (
@@ -79,6 +84,7 @@ export const SettingsPanel = ({ isOpen, onClose }) => {
           )}
           
           {activeTab === 'hashtag' && <HashtagEditor />}
+          {activeTab === 'config' && <ConfigManager />}
         </div>
 
         {/* Footer */}
