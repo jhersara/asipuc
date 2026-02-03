@@ -1,26 +1,29 @@
 /**
  * COMPONENTE: SlidePreview
  * 
- * Wrapper del slide con capacidad de exportación.
- * Separa la lógica de visualización de la exportación.
+ * Wrapper del slide con soporte para templates dinámicos.
  */
 
 import React, { useRef } from 'react';
-import { SlideTemplate } from './SlideTemplate';
+import { useTheme } from '../../../core/hooks/useTheme';
+import { getTemplateById } from '../templates';
 
 export const SlidePreview = ({ 
   data, 
   total, 
-  theme, 
   resolution,
   id = 'slide-preview'
 }) => {
   const slideRef = useRef(null);
+  const { theme, selectedTemplate } = useTheme();
+
+  // Obtener el componente del template seleccionado
+  const TemplateComponent = getTemplateById(selectedTemplate);
 
   return (
     <div className="slide-preview-container">
       <div id={id} ref={slideRef}>
-        <SlideTemplate
+        <TemplateComponent
           data={data}
           total={total}
           theme={theme}

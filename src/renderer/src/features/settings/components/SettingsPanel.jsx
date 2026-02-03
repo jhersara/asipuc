@@ -2,20 +2,24 @@
  * COMPONENTE: SettingsPanel
  * 
  * Panel principal de configuración con tabs.
+ * Incluye nuevo tab de Templates.
  */
 
 import React, { useState } from 'react';
+import { TemplateSelector } from './TemplateSelector';
 import { BackgroundSelector } from './BackgroundSelector';
 import { LogoConfigurator } from './LogoConfigurator';
 import { HashtagEditor } from './HashtagEditor';
 import './SettingsPanel.css';
+import './TemplateSelector.css';
 
 export const SettingsPanel = ({ isOpen, onClose }) => {
-  const [activeTab, setActiveTab] = useState('background');
+  const [activeTab, setActiveTab] = useState('template');
 
   if (!isOpen) return null;
 
   const tabs = [
+    { id: 'template', label: 'Diseño', icon: '🎨' },
     { id: 'background', label: 'Fondo', icon: '🖼️' },
     { id: 'logos', label: 'Logos', icon: '🏷️' },
     { id: 'hashtag', label: 'Hashtag', icon: '#️⃣' }
@@ -52,6 +56,7 @@ export const SettingsPanel = ({ isOpen, onClose }) => {
 
         {/* Content */}
         <div className="settings-content">
+          {activeTab === 'template' && <TemplateSelector />}
           {activeTab === 'background' && <BackgroundSelector />}
           
           {activeTab === 'logos' && (

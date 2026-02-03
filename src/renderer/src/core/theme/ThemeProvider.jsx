@@ -1,13 +1,14 @@
 /**
- * THEME PROVIDER - VERSIÓN COMPLETA
+ * THEME PROVIDER - CON SOPORTE PARA TEMPLATES
  * 
- * Proveedor de contexto para el sistema de temas.
- * Incluye soporte para logos, hashtag e imágenes de fondo.
+ * Proveedor de contexto para el sistema de temas y templates.
+ * Incluye soporte para logos, hashtag, imágenes de fondo y templates.
  */
 
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { darkTheme, lightTheme, createCustomTheme, getThemeByName } from './themes';
 import { STORAGE_KEYS, THEME_NAMES } from '../config/constants';
+import { DEFAULT_TEMPLATE_ID } from '../../features/slide-generator/templates';
 
 // Crear contexto
 export const ThemeContext = createContext();
@@ -19,12 +20,14 @@ export const ThemeProvider = ({ children }) => {
   const [currentTheme, setCurrentTheme] = useState(darkTheme);
   const [themeName, setThemeName] = useState(THEME_NAMES.DARK);
   const [customConfig, setCustomConfig] = useState(null);
+  const [selectedTemplate, setSelectedTemplate] = useState(DEFAULT_TEMPLATE_ID);
 
   /**
-   * Cargar tema desde localStorage al iniciar
+   * Cargar tema y template desde localStorage al iniciar
    */
   useEffect(() => {
     loadThemeFromStorage();
+    loadTemplateFromStorage();
   }, []);
 
   /**
@@ -33,6 +36,13 @@ export const ThemeProvider = ({ children }) => {
   useEffect(() => {
     saveThemeToStorage();
   }, [currentTheme, themeName, customConfig]);
+
+  /**
+   * Guardar template cuando cambie
+   */
+  useEffect(() => {
+    saveTemplateToStorage();
+  }, [selectedTemplate]);
 
   const loadThemeFromStorage = () => {
     try {
@@ -63,6 +73,17 @@ export const ThemeProvider = ({ children }) => {
     }
   };
 
+  const loadTemplateFromStorage = () => {
+    try {
+      const savedTemplate = localStorage.getItem('asipuc_selected_template');
+      if (savedTemplate) {
+        setSelectedTemplate(savedTemplate);
+      }
+    } catch (error) {
+      console.error('Error al cargar template:', error);
+    }
+  };
+
   const saveThemeToStorage = () => {
     try {
       localStorage.setItem(STORAGE_KEYS.THEME, themeName);
@@ -72,6 +93,14 @@ export const ThemeProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error al guardar tema:', error);
+    }
+  };
+
+  const saveTemplateToStorage = () => {
+    try {
+      localStorage.setItem('asipuc_selected_template', selectedTemplate);
+    } catch (error) {
+      console.error('Error al guardar template:', error);
     }
   };
 
@@ -155,17 +184,25 @@ export const ThemeProvider = ({ children }) => {
     updateCustomTheme(newConfig);
   }, [customConfig, currentTheme, updateCustomTheme]);
 
+  const changeTemplate = useCallback((templateId) => {
+    setSelectedTemplate(templateId);
+    console.log('✅ Template cambiado a:', templateId);
+  }, []);
+
   const resetTheme = useCallback(() => {
     setCurrentTheme(darkTheme);
     setThemeName(THEME_NAMES.DARK);
     setCustomConfig(null);
+    setSelectedTemplate(DEFAULT_TEMPLATE_ID);
     localStorage.removeItem(STORAGE_KEYS.USER_CONFIG);
+    localStorage.removeItem('asipuc_selected_template');
   }, []);
 
   const contextValue = {
     theme: currentTheme,
     themeName,
     customConfig,
+    selectedTemplate,
     changeTheme,
     updateCustomTheme,
     updateColor,
@@ -174,6 +211,7 @@ export const ThemeProvider = ({ children }) => {
     updateBackgroundImage,
     updateLogo,
     updateHashtag,
+    changeTemplate,
     resetTheme,
     availableThemes: [
       { name: THEME_NAMES.DARK, label: 'Oscuro' },

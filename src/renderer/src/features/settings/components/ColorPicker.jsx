@@ -1,79 +1,105 @@
 /**
  * COMPONENTE: ColorPicker
  * 
- * Selector de color profesional con presets
+ * Selector de colores con preview y presets.
  */
 
 import React, { useState } from 'react';
-import { COLOR_PALETTE } from '../../../core/config/constants';
 
 export const ColorPicker = ({ 
   label, 
-  value, 
-  onChange, 
-  showPresets = true 
+  color, 
+  onChange,
+  presets = []
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [currentColor, setCurrentColor] = useState(color || '#ffffff');
 
-  const presetColors = [
-    COLOR_PALETTE.YELLOW,
-    COLOR_PALETTE.RED,
-    COLOR_PALETTE.BLUE,
-    COLOR_PALETTE.NAVY,
-    COLOR_PALETTE.WHITE,
-    COLOR_PALETTE.SUCCESS,
-    COLOR_PALETTE.WARNING,
-    COLOR_PALETTE.ERROR,
-    '#000000',
-    '#ffffff'
+  const defaultPresets = [
+    { name: 'Blanco', value: '#ffffff' },
+    { name: 'Negro', value: '#000000' },
+    { name: 'Gris', value: '#808080' },
+    { name: 'Azul', value: '#007bff' },
+    { name: 'Verde', value: '#28a745' },
+    { name: 'Rojo', value: '#dc3545' },
+    { name: 'Amarillo', value: '#ffc107' },
+    { name: 'Naranja', value: '#fd7e14' },
+    { name: 'Morado', value: '#6f42c1' },
+    { name: 'Rosa', value: '#e83e8c' },
+    { name: 'Oro', value: '#d4af37' },
+    { name: 'Plata', value: '#c0c0c0' }
   ];
+
+  const colorPresets = presets.length > 0 ? presets : defaultPresets;
+
+  const handleColorChange = (e) => {
+    const newColor = e.target.value;
+    setCurrentColor(newColor);
+    if (onChange) {
+      onChange(newColor);
+    }
+  };
+
+  const handlePresetClick = (presetColor) => {
+    setCurrentColor(presetColor);
+    if (onChange) {
+      onChange(presetColor);
+    }
+  };
 
   return (
     <div className="color-picker">
       <label className="color-picker-label">{label}</label>
       
-      <div className="color-picker-controls">
-        {/* Vista previa del color actual */}
+      <div className="color-picker-input-group">
+        {/* Color preview */}
         <div 
           className="color-preview"
-          style={{ backgroundColor: value }}
+          style={{ backgroundColor: currentColor }}
           onClick={() => setIsOpen(!isOpen)}
         />
-        
-        {/* Input nativo de color */}
-        <input
-          type="color"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="color-input"
-        />
-        
-        {/* Valor hex */}
+
+        {/* Hex input */}
         <input
           type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="color-text-input"
-          placeholder="#000000"
+          className="color-hex-input"
+          value={currentColor}
+          onChange={(e) => {
+            setCurrentColor(e.target.value);
+            if (onChange) onChange(e.target.value);
+          }}
+          placeholder="#ffffff"
           maxLength={7}
+        />
+
+        {/* Native color picker */}
+        <input
+          type="color"
+          className="native-color-picker"
+          value={currentColor}
+          onChange={handleColorChange}
         />
       </div>
 
-      {/* Presets de colores */}
-      {showPresets && isOpen && (
+      {/* Color presets */}
+      {isOpen && (
         <div className="color-presets">
-          {presetColors.map((color) => (
-            <div
-              key={color}
-              className="color-preset"
-              style={{ backgroundColor: color }}
-              onClick={() => {
-                onChange(color);
-                setIsOpen(false);
-              }}
-              title={color}
-            />
-          ))}
+          <div className="presets-title">Colores Predefinidos</div>
+          <div className="presets-grid">
+            {colorPresets.map((preset, index) => (
+              <div
+                key={index}
+                className={`preset-color ${currentColor.toLowerCase() === preset.value.toLowerCase() ? 'active' : ''}`}
+                style={{ backgroundColor: preset.value }}
+                onClick={() => handlePresetClick(preset.value)}
+                title={preset.name}
+              >
+                {currentColor.toLowerCase() === preset.value.toLowerCase() && (
+                  <span className="preset-check">✓</span>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

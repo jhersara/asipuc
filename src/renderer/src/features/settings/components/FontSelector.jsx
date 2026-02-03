@@ -1,39 +1,38 @@
 /**
  * COMPONENTE: FontSelector
  * 
- * Selector de fuentes con preview
+ * Selector de fuentes con preview en tiempo real.
  */
 
 import React from 'react';
-import { SYSTEM_FONTS, CUSTOM_FONTS } from '../../../core/config/constants';
+import { SYSTEM_FONTS } from '../../../core/config/constants';
 
 export const FontSelector = ({ 
   label, 
-  value, 
+  selectedFont, 
   onChange,
-  category = 'all' // 'all', 'serif', 'sans-serif', 'display'
+  previewText = 'ASISTENCIA'
 }) => {
-  // Combinar fuentes del sistema y personalizadas
-  const allFonts = [...SYSTEM_FONTS, ...CUSTOM_FONTS];
-  
-  // Filtrar por categoría si es necesario
-  const fonts = category === 'all' 
-    ? allFonts 
-    : allFonts.filter(font => font.category === category);
+  const handleFontChange = (e) => {
+    const fontValue = e.target.value;
+    if (onChange) {
+      onChange(fontValue);
+    }
+  };
 
   return (
     <div className="font-selector">
       <label className="font-selector-label">{label}</label>
       
+      {/* Selector dropdown */}
       <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
         className="font-select"
-        style={{ fontFamily: value }}
+        value={selectedFont}
+        onChange={handleFontChange}
       >
-        {fonts.map((font) => (
+        {SYSTEM_FONTS.map((font, index) => (
           <option 
-            key={font.value} 
+            key={index} 
             value={font.value}
             style={{ fontFamily: font.value }}
           >
@@ -42,12 +41,19 @@ export const FontSelector = ({
         ))}
       </select>
 
-      {/* Preview del texto */}
+      {/* Preview */}
       <div 
         className="font-preview"
-        style={{ fontFamily: value }}
+        style={{ fontFamily: selectedFont }}
       >
-        ASISTENCIA 123
+        {previewText}
+      </div>
+
+      {/* Font info */}
+      <div className="font-info">
+        <small>
+          {SYSTEM_FONTS.find(f => f.value === selectedFont)?.category || 'sans-serif'}
+        </small>
       </div>
     </div>
   );

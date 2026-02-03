@@ -1,7 +1,7 @@
 /**
  * COMPONENTE: SizeSlider
  * 
- * Control deslizante para ajustar tamaños de texto
+ * Slider para ajustar tamaños con preview visual.
  */
 
 import React from 'react';
@@ -9,53 +9,62 @@ import React from 'react';
 export const SizeSlider = ({ 
   label, 
   value, 
-  onChange, 
-  min = 20, 
-  max = 200, 
-  step = 2,
+  onChange,
+  min = 20,
+  max = 200,
   unit = 'px',
-  showValue = true
+  step = 2
 }) => {
-  // Convertir valor de string (ej: "100px") a número
-  const numValue = parseInt(value) || min;
-
   const handleChange = (e) => {
     const newValue = parseInt(e.target.value);
-    onChange(`${newValue}${unit}`);
+    if (onChange) {
+      onChange(`${newValue}${unit}`);
+    }
   };
+
+  // Extraer valor numérico si viene con unidad
+  const numericValue = typeof value === 'string' 
+    ? parseInt(value.replace(/[^0-9]/g, ''))
+    : value;
+
+  // Calcular porcentaje para la barra de progreso
+  const percentage = ((numericValue - min) / (max - min)) * 100;
 
   return (
     <div className="size-slider">
-      <div className="size-slider-header">
-        <label className="size-slider-label">{label}</label>
-        {showValue && (
-          <span className="size-slider-value">{value}</span>
-        )}
+      <div className="slider-header">
+        <label className="slider-label">{label}</label>
+        <span className="slider-value">{numericValue}{unit}</span>
       </div>
 
-      <div className="size-slider-control">
+      <div className="slider-container">
         <input
           type="range"
+          className="slider-input"
           min={min}
           max={max}
           step={step}
-          value={numValue}
+          value={numericValue}
           onChange={handleChange}
-          className="slider"
+          style={{
+            background: `linear-gradient(to right, #007bff 0%, #007bff ${percentage}%, #444 ${percentage}%, #444 100%)`
+          }}
         />
-        
-        <div className="slider-markers">
-          <span>{min}{unit}</span>
-          <span>{max}{unit}</span>
-        </div>
       </div>
 
-      {/* Preview del tamaño */}
-      <div 
-        className="size-preview"
-        style={{ fontSize: value }}
-      >
-        Aa
+      <div className="slider-marks">
+        <span className="mark-min">{min}{unit}</span>
+        <span className="mark-max">{max}{unit}</span>
+      </div>
+
+      {/* Preview visual del tamaño */}
+      <div className="size-preview">
+        <div 
+          className="preview-text"
+          style={{ fontSize: `${Math.min(numericValue / 2, 48)}px` }}
+        >
+          Aa
+        </div>
       </div>
     </div>
   );
