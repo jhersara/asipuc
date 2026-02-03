@@ -1,42 +1,25 @@
 /**
  * COMPONENTE PRINCIPAL: App
  * 
- * Versión actualizada con soporte para FASE 3:
- * - Logos configurables
- * - Hashtag
- * - Imagen de fondo
- * - Exportación perfecta 1920x1080
+ * Versión completa con panel de configuración.
  */
 
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { ThemeProvider } from './core/theme/ThemeProvider';
 import { useTheme } from './core/hooks/useTheme';
 import { useAttendance } from './features/attendance/hooks/useAttendanceForm';
 import { useImageExport } from './core/hooks/useImageExport';
 import { AttendanceForm } from './features/attendance/components/AttendanceForm';
 import { SlidePreview } from './features/slide-generator/components/SlidePreview';
+import { SettingsPanel } from './features/settings/components/SettingsPanel';
 import { DEFAULT_RESOLUTION } from './core/config/constants';
 import './App.css';
 
 const AppContent = () => {
-  const { theme, updateHashtag, updateBackgroundImage } = useTheme();
+  const { theme } = useTheme();
   const attendance = useAttendance();
   const { exportImage, isExporting, exportError } = useImageExport();
-
-  /**
-   * Configuración inicial (puedes personalizar aquí)
-   */
-  useEffect(() => {
-    // Configurar hashtag (descomenta y personaliza)
-    updateHashtag({
-      enabled: true,
-      text: '#SoachaCentral',
-      position: 'top-right'
-    });
-
-    // Configurar fondo (usa una URL externa para pruebas rápidas)
-    // updateBackgroundImage('https://images.unsplash.com/photo-1464802686167-b939a6910659?w=1920&h=1080&fit=crop');
-  }, [updateHashtag, updateBackgroundImage]);
+  const [showSettings, setShowSettings] = useState(false);
 
   /**
    * Exportar imagen con configuración óptima
@@ -60,6 +43,16 @@ const AppContent = () => {
 
   return (
     <div className="app-container">
+      {/* Botón de configuración flotante */}
+      <button 
+        className="btn-settings-float"
+        onClick={() => setShowSettings(true)}
+        title="Configuración"
+      >
+        ⚙️
+      </button>
+
+      {/* Panel de control */}
       <AttendanceForm
         data={attendance.data}
         total={attendance.total}
@@ -69,6 +62,7 @@ const AppContent = () => {
         isSaving={attendance.isSaving || isExporting}
       />
 
+      {/* Vista previa del slide */}
       <SlidePreview
         data={attendance.getFormattedData()}
         total={attendance.total}
@@ -77,6 +71,13 @@ const AppContent = () => {
         id="slide-preview"
       />
 
+      {/* Panel de configuración */}
+      <SettingsPanel 
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+      />
+
+      {/* Mensajes de error */}
       {exportError && (
         <div className="error-toast">
           Error al exportar: {exportError}
