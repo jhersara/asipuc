@@ -1,0 +1,568 @@
+/**
+ * ESTILOS: Multi-Service System
+ * 
+ * Estilos para el sistema de múltiples servicios.
+ */
+
+/* ========================================
+   SERVICE TABS
+   ======================================== */
+.service-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.service-tab {
+  padding: 12px 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid #444;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.service-tab:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #007bff;
+  transform: translateX(3px);
+}
+
+.service-tab.active {
+  background: #007bff;
+  border-color: #007bff;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+}
+
+.service-tab.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.service-tab.accumulated-tab {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border-color: #28a745;
+  font-weight: bold;
+}
+
+.service-tab.accumulated-tab:hover:not(.active) {
+  background: linear-gradient(135deg, #218838 0%, #1aa179 100%);
+}
+
+.service-tab.accumulated-tab.active {
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.5);
+}
+
+.tab-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.tab-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.tab-time {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.tab-total {
+  font-size: 20px;
+  font-weight: bold;
+  color: #fff;
+  min-width: 40px;
+  text-align: right;
+}
+
+.total-highlight {
+  font-size: 24px;
+}
+
+/* ========================================
+   CURRENT SERVICE HEADER
+   ======================================== */
+.current-service-header {
+  margin: 15px 0;
+  padding: 12px;
+  background: rgba(0, 123, 255, 0.1);
+  border-left: 4px solid #007bff;
+  border-radius: 4px;
+}
+
+.current-service-header h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  color: #fff;
+}
+
+.service-time {
+  font-size: 12px;
+  color: #aaa;
+}
+
+/* ========================================
+   ACCUMULATED VIEW
+   ======================================== */
+.accumulated-view {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.accumulated-notice {
+  padding: 12px;
+  background: rgba(40, 167, 69, 0.1);
+  border: 1px solid #28a745;
+  border-radius: 6px;
+  color: #28a745;
+  font-size: 13px;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* ========================================
+   BATCH EXPORT
+   ======================================== */
+.batch-section {
+  margin-top: 20px;
+}
+
+.batch-export {
+  padding: 15px;
+  background: rgba(111, 66, 193, 0.1);
+  border: 1px solid #6f42c1;
+  border-radius: 8px;
+}
+
+.btn-batch-export {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-batch-export:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5a32a3 0%, #4a2685 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(111, 66, 193, 0.4);
+}
+
+.btn-batch-export:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.export-progress {
+  margin-top: 10px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #6f42c1 0%, #8357d5 100%);
+  transition: width 0.3s ease;
+}
+
+.batch-export-help {
+  margin: 10px 0 0 0;
+  font-size: 11px;
+  color: #aaa;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* ========================================
+   SERVICE MANAGER OVERLAY
+   ======================================== */
+.service-manager-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.service-manager-panel {
+  background: #2a2a2a;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.btn-close-manager {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px 10px;
+  transition: all 0.2s;
+}
+
+.btn-close-manager:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+/* ========================================
+   SERVICE MANAGER
+   ======================================== */
+.service-manager {
+  color: #fff;
+}
+
+.manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.manager-header h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.btn-add-service {
+  padding: 10px 16px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-add-service:hover {
+  background: #218838;
+}
+
+/* Add Service Dialog */
+.add-service-dialog {
+  padding: 20px;
+  background: rgba(40, 167, 69, 0.1);
+  border: 1px solid #28a745;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.dialog-field {
+  margin-bottom: 15px;
+}
+
+.dialog-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #ccc;
+}
+
+.dialog-field input {
+  width: 100%;
+  padding: 10px;
+  background: #1a1a1a;
+  border: 1px solid #28a745;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.dialog-field input:focus {
+  outline: none;
+  border-color: #34d058;
+}
+
+.btn-confirm-add {
+  width: 100%;
+  padding: 12px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-confirm-add:hover {
+  background: #218838;
+}
+
+/* Services List */
+.services-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.service-item {
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #444;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.service-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #007bff;
+}
+
+.service-item.disabled-service {
+  opacity: 0.5;
+}
+
+.service-info {
+  flex: 1;
+}
+
+.service-name {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.service-time {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 6px;
+}
+
+.service-status {
+  font-size: 11px;
+  color: #28a745;
+}
+
+.service-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-toggle,
+.btn-edit,
+.btn-delete {
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid #555;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-toggle:hover {
+  background: #007bff;
+  border-color: #007bff;
+}
+
+.btn-edit:hover {
+  background: #ffc107;
+  border-color: #ffc107;
+}
+
+.btn-delete:hover {
+  background: #dc3545;
+  border-color: #dc3545;
+}
+
+/* Edit Mode */
+.service-edit-mode {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.edit-fields {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-name-input {
+  flex: 2;
+  padding: 8px;
+  background: #1a1a1a;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.edit-time-input {
+  flex: 1;
+  padding: 8px;
+  background: #1a1a1a;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-save-edit,
+.btn-cancel-edit {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-save-edit {
+  background: #28a745;
+  color: white;
+}
+
+.btn-save-edit:hover {
+  background: #218838;
+}
+
+.btn-cancel-edit {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-cancel-edit:hover {
+  background: #5a6268;
+}
+
+/* ========================================
+   UTILITY BUTTONS
+   ======================================== */
+.utility-buttons {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-reset-all {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid #dc3545;
+  color: #dc3545;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-reset-all:hover {
+  background: #dc3545;
+  color: white;
+}
+
+/* ========================================
+   BOTÓN FLOTANTE DE SERVICIOS
+   ======================================== */
+.btn-services-float {
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+  transition: all 0.3s;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-services-float:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.6);
+}
+
+.btn-services-float:active {
+  transform: scale(0.95);
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 1200px) {
+  .btn-services-float {
+    bottom: 100px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+
+  .service-manager-panel {
+    width: 95%;
+  }
+}
