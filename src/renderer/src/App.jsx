@@ -16,6 +16,7 @@ import { ServiceTabs } from './features/multi-service/components/ServiceTabs';
 import { ServiceManager } from './features/multi-service/components/ServiceManager';
 import { BatchExport } from './features/multi-service/components/BatchExport';
 import { DEFAULT_RESOLUTION } from './core/config/constants';
+import { FaListAlt } from "react-icons/fa";
 import './App.css';
 import './features/multi-service/components/MultiService.css';
 
@@ -100,7 +101,7 @@ const AppContent = () => {
         onClick={() => setShowServiceManager(!showServiceManager)}
         title="Gestionar Servicios"
       >
-        📋
+        <FaListAlt />
       </button>
 
       {/* Panel de control izquierdo */}

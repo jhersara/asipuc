@@ -5,6 +5,10 @@
  */
 
 import React, { useState } from 'react';
+import { RiAddLargeFill } from "react-icons/ri";
+import { IoClose } from "react-icons/io5";
+import { FaCheck, FaCheckCircle, FaEdit, FaPause, FaPlay } from "react-icons/fa";
+import { MdDeleteForever } from 'react-icons/md';
 
 export const ServiceManager = ({ 
   services, 
@@ -65,7 +69,7 @@ export const ServiceManager = ({
           className="btn-add-service"
           onClick={() => setShowAddDialog(!showAddDialog)}
         >
-          {showAddDialog ? '✕ Cancelar' : '➕ Agregar Servicio'}
+          {showAddDialog ? (<><IoClose  style={{ marginRight: '6px',fontStyle: 'bold', fontSize: '20px' }} /> Cancelar</>) : (<><RiAddLargeFill style={{ marginRight: '6px',fontStyle: 'bold' }}/> Agregar Servicio</>)}
         </button>
       </div>
 
@@ -94,6 +98,7 @@ export const ServiceManager = ({
             className="btn-confirm-add"
             onClick={handleAddService}
           >
+            <RiAddLargeFill style={{ marginRight: '6px',fontStyle: 'bold' }} className='icon'/>
             Agregar
           </button>
         </div>
@@ -128,13 +133,13 @@ export const ServiceManager = ({
                     className="btn-save-edit"
                     onClick={() => saveEdit(service.id)}
                   >
-                    ✓ Guardar
+                    <FaCheck/> Guardar
                   </button>
                   <button 
                     className="btn-cancel-edit"
                     onClick={cancelEdit}
                   >
-                    ✕
+                    <IoClose className='icon'/>
                   </button>
                 </div>
               </div>
@@ -145,7 +150,7 @@ export const ServiceManager = ({
                   <div className="service-name">{service.name}</div>
                   <div className="service-time">{service.time}</div>
                   <div className="service-status">
-                    {service.enabled ? '✅ Activo' : '⏸️ Deshabilitado'}
+                    {service.enabled ? (<><FaCheckCircle className='icon'/> Activo</>) : (<><FaPause className='icon' /> Inactivo</>)}
                   </div>
                 </div>
 
@@ -155,14 +160,14 @@ export const ServiceManager = ({
                     onClick={() => onToggleService(service.id)}
                     title={service.enabled ? 'Deshabilitar' : 'Habilitar'}
                   >
-                    {service.enabled ? '⏸️' : '▶️'}
+                    {service.enabled ? (<><FaPause className='icon' /></>) : (<><FaPlay className='icon' /></>)}
                   </button>
                   
                   <button
                     className="btn-edit"
                     onClick={() => startEdit(service)}
                   >
-                    ✏️
+                    <FaEdit className='icon'/>
                   </button>
 
                   {services.length > 1 && (
@@ -174,7 +179,7 @@ export const ServiceManager = ({
                         }
                       }}
                     >
-                      🗑️
+                      <MdDeleteForever className='icon'/>
                     </button>
                   )}
                 </div>

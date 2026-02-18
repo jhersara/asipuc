@@ -8,6 +8,8 @@
 /* ========================================
    VARIABLES CSS
    ======================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 :root {
   --control-bg: #333;
   --control-text: #ffffff;
@@ -20,6 +22,7 @@
   --error-color: #dc3545;
   --border-radius: 8px;
   --transition-speed: 0.3s;
+  --font-main: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 /* ========================================
@@ -32,7 +35,7 @@
 }
 
 body {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-main);
   background-color: #222;
   color: white;
   display: flex;

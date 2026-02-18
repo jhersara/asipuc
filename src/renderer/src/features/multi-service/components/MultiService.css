@@ -282,14 +282,19 @@
 
 .btn-add-service {
   padding: 10px 16px;
-  background: #28a745;
-  color: white;
-  border: none;
+  background: rgba(5, 255, 64, 0.1);
+  border: 1px solid #2bd151;
+  color: rgb(255, 255, 255);
   border-radius: 6px;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
 }
 
 .btn-add-service:hover {
@@ -341,6 +346,13 @@
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.icon {
+  font-size: 1rem;
+  font-weight: 900;
 }
 
 .btn-confirm-add:hover {
@@ -391,8 +403,12 @@
 }
 
 .service-status {
-  font-size: 11px;
-  color: #28a745;
+  font-size: 15px;
+  color: #0be63e;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .service-actions {
@@ -405,25 +421,29 @@
 .btn-delete {
   padding: 8px 12px;
   background: transparent;
-  border: 1px solid #555;
+  border: 1px solid #909090;
+  color: #007bff;
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .btn-toggle:hover {
-  background: #007bff;
+  background: #cfd0d2;
   border-color: #007bff;
 }
 
 .btn-edit:hover {
-  background: #ffc107;
-  border-color: #ffc107;
+  background: #ffc107d6;
+  border-color: #ffbf00;
 }
 
 .btn-delete:hover {
-  background: #dc3545;
+  background: #dc3546d2;
   border-color: #dc3545;
 }
 
@@ -471,20 +491,26 @@
   border-radius: 4px;
   font-weight: 500;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .btn-save-edit {
-  background: #28a745;
+  background: #28a74695;
   color: white;
+  border: 1px solid #2bd151;
 }
 
 .btn-save-edit:hover {
-  background: #218838;
+  background: #2db049;
 }
 
 .btn-cancel-edit {
   background: #6c757d;
   color: white;
+  border: 1px solid #ccc;
 }
 
 .btn-cancel-edit:hover {
