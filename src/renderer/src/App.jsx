@@ -16,9 +16,10 @@ import { ServiceTabs } from './features/multi-service/components/ServiceTabs';
 import { ServiceManager } from './features/multi-service/components/ServiceManager';
 import { BatchExport } from './features/multi-service/components/BatchExport';
 import { DEFAULT_RESOLUTION } from './core/config/constants';
-import { FaListAlt } from "react-icons/fa";
+import { FaConciergeBell, FaListAlt } from "react-icons/fa";
 import './App.css';
 import './features/multi-service/components/MultiService.css';
+import { IoSettings, IoSettingsSharp } from 'react-icons/io5';
 
 const AppContent = () => {
   const { theme } = useTheme();
@@ -92,7 +93,7 @@ const AppContent = () => {
         onClick={() => setShowSettings(true)}
         title="Configuración"
       >
-        ⚙️
+        <IoSettingsSharp/>
       </button>
 
       {/* Botón flotante de gestión de servicios */}

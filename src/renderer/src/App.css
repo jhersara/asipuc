@@ -72,8 +72,8 @@ body {
   background: var(--control-bg);
   padding: 20px;
   border-radius: var(--border-radius);
-  width: 320px;
-  max-height: 90vh;
+  width: 560px;
+  max-height: 95vh;
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -97,6 +97,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  width: 200px;
 }
 
 .input-group {
@@ -104,6 +105,7 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
+  width: 200px;
 }
 
 .input-group label {
@@ -115,8 +117,8 @@ body {
 }
 
 .input-group input {
-  width: 80px;
-  padding: 8px;
+  width: 100px;
+  padding: 5px;
   font-size: 16px;
   text-align: center;
   background: var(--input-bg);
@@ -270,11 +272,11 @@ body {
    SCROLLBAR PERSONALIZADO
    ======================================== */
 .control-panel::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .control-panel::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.097);
   border-radius: 4px;
 }
 
@@ -292,14 +294,14 @@ body {
    ======================================== */
 .btn-settings-float {
   position: fixed;
-  bottom: 30px;
-  right: 30px;
+  bottom: 20px;
+  right: 3px;
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  background: #007bff64;
   color: white;
-  border: none;
+  border: 1px solid #007bff;
   font-size: 24px;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
@@ -339,8 +341,7 @@ body {
   }
   
   .btn-settings-float {
-    bottom: 20px;
-    right: 20px;
+    right: 5px;
     width: 50px;
     height: 50px;
     font-size: 20px;
