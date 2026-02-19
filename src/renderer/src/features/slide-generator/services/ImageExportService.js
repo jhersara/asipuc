@@ -1,166 +1,94 @@
-/**
- * SERVICIO: ImageExportService
- * 
- * Servicio profesional para exportación de imágenes.
- * Maneja la lógica de conversión de DOM a imagen con alta calidad.
- * 
- * Características:
- * - Exportación en resolución Full HD (1920x1080)
- * - Control de calidad
- * - Manejo de errores robusto
- * - Múltiples formatos (PNG por defecto)
- */
-
 import { toPng, toJpeg } from 'html-to-image';
 import { IMAGE_QUALITY, DEFAULT_RESOLUTION } from '../../../core/config/constants';
 
 class ImageExportService {
+
   /**
-   * Exportar elemento DOM como PNG
-   * 
-   * @param {HTMLElement} element - Elemento DOM a exportar
-   * @param {Object} options - Opciones de exportación
-   * @returns {Promise<string>} Data URL de la imagen
+   * Prepara el elemento para captura: elimina transform heredado,
+   * captura, y restaura el estado original.
    */
-  async exportToPng(element, options = {}) {
+  async _captureElement(element, options, format = 'png') {
     const {
       quality = IMAGE_QUALITY.HIGH,
       backgroundColor = '#000000',
-      pixelRatio = 2, // Mejora la nitidez en pantallas de alta resolución
       width = DEFAULT_RESOLUTION.width,
       height = DEFAULT_RESOLUTION.height
     } = options;
 
-    if (!element) {
-      throw new Error('Elemento no encontrado para exportar');
-    }
+    // Guardar transform actual del elemento
+    const prevTransform = element.style.transform;
+    const prevTransformOrigin = element.style.transformOrigin;
+    const prevPosition = element.style.position;
+    const prevLeft = element.style.left;
+    const prevTop = element.style.top;
+
+    // Sacar el elemento del flujo visual para que no afecte el layout
+    // y eliminar cualquier transform que distorsione la captura
+    element.style.transform = 'none';
+    element.style.transformOrigin = 'top left';
+    element.style.position = 'fixed';
+    element.style.left = '-99999px';
+    element.style.top = '-99999px';
 
     try {
-      const dataUrl = await toPng(element, {
+      const fn = format === 'jpeg' ? toJpeg : toPng;
+      const dataUrl = await fn(element, {
         quality,
         backgroundColor,
-        pixelRatio,
+        pixelRatio: 1,          // 1:1 → imagen exactamente 1920×1080
         width,
         height,
-        // Cachear fuentes para evitar problemas de carga
         cacheBust: false,
-        // Incluir estilos inline
-        includeQueryParams: true
+        skipAutoScale: true
       });
-
       return dataUrl;
+    } finally {
+      // Restaurar siempre, incluso si falla
+      element.style.transform = prevTransform;
+      element.style.transformOrigin = prevTransformOrigin;
+      element.style.position = prevPosition;
+      element.style.left = prevLeft;
+      element.style.top = prevTop;
+    }
+  }
+
+  async exportToPng(element, options = {}) {
+    if (!element) throw new Error('Elemento no encontrado para exportar');
+    try {
+      return await this._captureElement(element, options, 'png');
     } catch (error) {
       console.error('Error al exportar a PNG:', error);
       throw new Error(`Error al generar imagen PNG: ${error.message}`);
     }
   }
 
-  /**
-   * Exportar elemento DOM como JPEG
-   * 
-   * @param {HTMLElement} element - Elemento DOM a exportar
-   * @param {Object} options - Opciones de exportación
-   * @returns {Promise<string>} Data URL de la imagen
-   */
   async exportToJpeg(element, options = {}) {
-    const {
-      quality = IMAGE_QUALITY.HIGH,
-      backgroundColor = '#000000',
-      pixelRatio = 2,
-      width = DEFAULT_RESOLUTION.width,
-      height = DEFAULT_RESOLUTION.height
-    } = options;
-
-    if (!element) {
-      throw new Error('Elemento no encontrado para exportar');
-    }
-
+    if (!element) throw new Error('Elemento no encontrado para exportar');
     try {
-      const dataUrl = await toJpeg(element, {
-        quality,
-        backgroundColor,
-        pixelRatio,
-        width,
-        height,
-        cacheBust: false
-      });
-
-      return dataUrl;
+      return await this._captureElement(element, options, 'jpeg');
     } catch (error) {
       console.error('Error al exportar a JPEG:', error);
       throw new Error(`Error al generar imagen JPEG: ${error.message}`);
     }
   }
 
-  /**
-   * Descargar imagen desde data URL
-   * 
-   * @param {string} dataUrl - Data URL de la imagen
-   * @param {string} filename - Nombre del archivo
-   */
   downloadImage(dataUrl, filename = null) {
-    try {
-      const link = document.createElement('a');
-      const defaultFilename = `Asistencia-${new Date().toLocaleDateString().replace(/\//g, '-')}.png`;
-      
-      link.download = filename || defaultFilename;
-      link.href = dataUrl;
-      link.click();
-      
-      // Limpiar
-      link.remove();
-    } catch (error) {
-      console.error('Error al descargar imagen:', error);
-      throw new Error(`Error al descargar imagen: ${error.message}`);
-    }
+    const defaultFilename = `Asistencia-${new Date().toLocaleDateString().replace(/\//g, '-')}.png`;
+    const link = document.createElement('a');
+    link.download = filename || defaultFilename;
+    link.href = dataUrl;
+    link.click();
+    link.remove();
   }
 
-  /**
-   * Exportar y descargar en un solo paso
-   * 
-   * @param {HTMLElement} element - Elemento a exportar
-   * @param {Object} options - Opciones de exportación
-   * @param {string} filename - Nombre del archivo
-   * @returns {Promise<boolean>} True si se exportó correctamente
-   */
   async exportAndDownload(element, options = {}, filename = null) {
-    try {
-      const format = options.format || 'png';
-      
-      let dataUrl;
-      if (format === 'jpeg' || format === 'jpg') {
-        dataUrl = await this.exportToJpeg(element, options);
-      } else {
-        dataUrl = await this.exportToPng(element, options);
-      }
-
-      this.downloadImage(dataUrl, filename);
-      
-      return true;
-    } catch (error) {
-      console.error('Error en exportación completa:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Obtener dimensiones reales del elemento
-   * 
-   * @param {HTMLElement} element - Elemento a medir
-   * @returns {Object} Ancho y alto del elemento
-   */
-  getElementDimensions(element) {
-    if (!element) {
-      return DEFAULT_RESOLUTION;
-    }
-
-    const rect = element.getBoundingClientRect();
-    return {
-      width: rect.width,
-      height: rect.height
-    };
+    const format = options.format || 'png';
+    const dataUrl = format === 'jpeg' || format === 'jpg'
+      ? await this.exportToJpeg(element, options)
+      : await this.exportToPng(element, options);
+    this.downloadImage(dataUrl, filename);
+    return true;
   }
 }
 
-// Exportar instancia única (Singleton pattern)
 export const imageExportService = new ImageExportService();
