@@ -61,6 +61,8 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: center;
+
   gap: 4px;
 }
 
@@ -68,7 +70,15 @@
   font-size: 14px;
   font-weight: 600;
   color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 }
+.tab-name .icon{
+  font-size: 16px;
+} 
+
 
 .tab-time {
   font-size: 11px;
@@ -120,13 +130,21 @@
 
 .accumulated-notice {
   padding: 12px;
-  background: rgba(40, 167, 69, 0.1);
+  background: rgba(40, 167, 70, 0.194);
   border: 1px solid #28a745;
   border-radius: 6px;
-  color: #28a745;
+  color: #0be63e;
   font-size: 13px;
   text-align: center;
   font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.accumulated-notice .icon{
+  font-size: 17px;
+  color: #0be63e;
 }
 
 /* ========================================
@@ -141,6 +159,10 @@
   background: rgba(111, 66, 193, 0.1);
   border: 1px solid #6f42c1;
   border-radius: 8px;
+}
+
+.batch-export .icon {
+  font-size: 18px;
 }
 
 .btn-batch-export {
@@ -537,10 +559,18 @@
   font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+.btn-reset-all .icon{
+  font-size: 18px;
+  font-family: ;
 }
 
 .btn-reset-all:hover {
-  background: #dc3545;
+  background: #dc3546b3;
   color: white;
 }
 

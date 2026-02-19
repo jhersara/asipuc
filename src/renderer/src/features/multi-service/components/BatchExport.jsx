@@ -9,6 +9,8 @@ import { useTheme } from '../../../core/hooks/useTheme';
 import { getTemplateById } from '../../slide-generator/templates';
 import { DEFAULT_RESOLUTION } from '../../../core/config/constants';
 import { toPng } from 'html-to-image';
+import { GiCardboardBox } from 'react-icons/gi';
+import { IoReloadSharp } from 'react-icons/io5';
 
 export const BatchExport = ({ 
   services, 
@@ -127,12 +129,12 @@ export const BatchExport = ({
       >
         {isExporting ? (
           <>
-            <span className="spinner">⏳</span>
+            <span className="spinner"><IoReloadSharp className='icon'/></span>
             Exportando... {progress}%
           </>
         ) : (
           <>
-            📦 Exportar Todos ({services.filter(s => s.enabled).length + 1} slides)
+            <GiCardboardBox className='icon'/> Exportar Todos ({services.filter(s => s.enabled).length + 1} slides)
           </>
         )}
       </button>

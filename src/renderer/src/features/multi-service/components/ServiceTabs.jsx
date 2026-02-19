@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { TfiCup } from 'react-icons/tfi';
 
 export const ServiceTabs = ({ 
   services, 
@@ -43,7 +44,7 @@ export const ServiceTabs = ({
         onClick={() => onShowAccumulated(true)}
       >
         <div className="tab-info">
-          <span className="tab-name">🏆 TOTAL ACUMULADO</span>
+          <span className="tab-name"><TfiCup className='icon'/> TOTAL ACUMULADO</span>
           <span className="tab-time">Todos los servicios</span>
         </div>
         <div className="tab-total total-highlight">

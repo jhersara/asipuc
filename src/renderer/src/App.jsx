@@ -16,10 +16,10 @@ import { ServiceTabs } from './features/multi-service/components/ServiceTabs';
 import { ServiceManager } from './features/multi-service/components/ServiceManager';
 import { BatchExport } from './features/multi-service/components/BatchExport';
 import { DEFAULT_RESOLUTION } from './core/config/constants';
-import { FaConciergeBell, FaListAlt } from "react-icons/fa";
+import { FaChalkboard, FaChartBar, FaConciergeBell, FaListAlt } from "react-icons/fa";
 import './App.css';
 import './features/multi-service/components/MultiService.css';
-import { IoSettings, IoSettingsSharp } from 'react-icons/io5';
+import { IoReloadSharp, IoSettings, IoSettingsSharp } from 'react-icons/io5';
 
 const AppContent = () => {
   const { theme } = useTheme();
@@ -147,7 +147,7 @@ const AppContent = () => {
           // Vista del total acumulado (solo lectura)
           <div className="accumulated-view">
             <div className="accumulated-notice">
-              📊 Este es el total acumulado de todos los servicios activos
+              <FaChartBar className='icon'/> Este es el total acumulado de todos los servicios activos
             </div>
             
             <div className="inputs-container">
@@ -205,7 +205,7 @@ const AppContent = () => {
               }
             }}
           >
-            🔄 Resetear Todo
+            <IoReloadSharp className='icon'/> Resetear Todo
           </button>
         </div>
       </div>
