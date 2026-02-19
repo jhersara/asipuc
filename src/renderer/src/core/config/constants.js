@@ -106,7 +106,9 @@ export const STORAGE_KEYS = {
   THEME: 'asipuc_theme',
   USER_CONFIG: 'asipuc_user_config',
   LAST_ATTENDANCE: 'asipuc_last_attendance',
-  EXPORT_SETTINGS: 'asipuc_export_settings'
+  EXPORT_SETTINGS: 'asipuc_export_settings',
+  CUSTOM_BACKGROUNDS: 'asipuc_custom_backgrounds',
+  ACTIVE_BACKGROUND: 'asipuc_active_background'
 };
 
 // Nombres de temas
@@ -136,6 +138,9 @@ export const MAX_FILE_SIZES = {
   IMAGE: 10 * 1024 * 1024, // 10MB
   LOGO: 5 * 1024 * 1024 // 5MB
 };
+
+// Fondos predefinidos del sistema
+export const DEFAULT_BACKGROUNDS = [];
 
 // Posiciones de logos en el slide
 export const LOGO_POSITIONS = {

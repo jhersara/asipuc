@@ -1,71 +1,112 @@
-/**
- * COMPONENTE: BackgroundSelector
- * 
- * Selector de imágenes de fondo con galería y uploader.
- */
-
-import React, { useState } from 'react';
-import { ImageUploader } from './ImageUploader';
+import React, { useState, useEffect, useRef } from 'react';
 import { useResources } from '../hooks/useResources';
 import { useTheme } from '../../../core/hooks/useTheme';
+import { fileManagerService } from '../services/fileManagerService';
 
 export const BackgroundSelector = () => {
-  const { getAllBackgrounds, uploadFile, isLoading } = useResources();
+  const { getAllBackgrounds, isLoading } = useResources();
   const { updateBackgroundImage, theme } = useTheme();
+
   const [selectedBackground, setSelectedBackground] = useState(theme.backgroundImage);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
+  const [uploadWarning, setUploadWarning] = useState(null);
+  const inputRef = useRef(null);
 
   const backgrounds = getAllBackgrounds();
 
-  /**
-   * Seleccionar fondo
-   */
-  const handleSelectBackground = (backgroundUrl) => {
-    setSelectedBackground(backgroundUrl);
-    updateBackgroundImage(backgroundUrl);
+  const handleSelectBackground = (url) => {
+    setSelectedBackground(url);
+    updateBackgroundImage(url);
   };
 
-  /**
-   * Subir nuevo fondo
-   */
-  const handleUploadBackground = async (file) => {
-    const result = await uploadFile(file, 'background');
-    if (result.success) {
-      handleSelectBackground(result.resource.url);
-    }
-  };
-
-  /**
-   * Limpiar fondo
-   */
   const handleClearBackground = () => {
     setSelectedBackground(null);
     updateBackgroundImage(null);
+  };
+
+  const processFile = async (file) => {
+    setIsUploading(true);
+    setUploadError(null);
+    setUploadWarning(null);
+
+    const result = await fileManagerService.loadBackgroundImage(file);
+
+    if (!result.success) {
+      setUploadError(result.errors.join(', '));
+      setIsUploading(false);
+      return;
+    }
+
+    if (result.warnings?.length > 0) {
+      setUploadWarning(result.warnings[0]);
+    }
+
+    handleSelectBackground(result.data.url);
+    setIsUploading(false);
+  };
+
+  const handleFileInput = (e) => {
+    const file = e.target.files[0];
+    if (file) processFile(file);
+    e.target.value = '';
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) processFile(file);
   };
 
   return (
     <div className="background-selector">
       <h3 className="section-title">Imagen de Fondo</h3>
 
-      {/* Uploader */}
-      <div className="upload-section">
-        <ImageUploader
-          onUpload={handleUploadBackground}
-          label="Subir Fondo Personalizado"
-          accept="image/jpeg,image/jpg,image/png,image/webp"
-          maxSize={10 * 1024 * 1024}
-        />
+      {/* Zona de carga */}
+      <div
+        className={`drop-zone ${isDragging ? 'dragging' : ''}`}
+        onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={handleDrop}
+      >
+        {isUploading ? (
+          <div className="upload-placeholder"><p>Cargando imagen...</p></div>
+        ) : (
+          <div className="upload-placeholder">
+            <p>Arrastra una imagen aquí</p>
+            <span>o</span>
+            <label className="btn-upload-inline">
+              Seleccionar archivo
+              <input
+                ref={inputRef}
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
+                onChange={handleFileInput}
+                style={{ display: 'none' }}
+              />
+            </label>
+            <span style={{ fontSize: '12px', color: '#888', marginTop: '6px' }}>
+              JPG, PNG, WEBP — Recomendado 1920×1080
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* Galería de fondos */}
+      {uploadError && <div className="upload-error">⚠️ {uploadError}</div>}
+      {uploadWarning && !uploadError && <div className="upload-warning">⚠️ {uploadWarning}</div>}
+
+      {/* Galería */}
       <div className="backgrounds-gallery">
         <h4 className="gallery-title">Fondos Disponibles</h4>
-        
+
         {isLoading ? (
           <div className="loading">Cargando fondos...</div>
         ) : backgrounds.length === 0 ? (
           <div className="empty-state">
             <p>No hay fondos disponibles.</p>
-            <p className="hint">Sube uno usando el botón de arriba o coloca imágenes en:</p>
+            <p className="hint">Sube uno o coloca imágenes en:</p>
             <code>resources/assets/backgrounds/</code>
           </div>
         ) : (
@@ -87,19 +128,16 @@ export const BackgroundSelector = () => {
         )}
       </div>
 
-      {/* Botón para limpiar */}
       {selectedBackground && (
-        <button className="btn-clear" onClick={handleClearBackground}>
-          Quitar Fondo
-        </button>
-      )}
-
-      {/* Preview del fondo seleccionado */}
-      {selectedBackground && (
-        <div className="current-background-preview">
-          <h4>Fondo Actual:</h4>
-          <img src={selectedBackground} alt="Fondo actual" />
-        </div>
+        <>
+          <button className="btn-clear" onClick={handleClearBackground}>
+            Quitar Fondo
+          </button>
+          <div className="current-background-preview">
+            <h4>Fondo Actual:</h4>
+            <img src={selectedBackground} alt="Fondo actual" />
+          </div>
+        </>
       )}
     </div>
   );

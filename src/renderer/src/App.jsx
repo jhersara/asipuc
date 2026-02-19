@@ -6,7 +6,6 @@
 
 import React, { useState } from 'react';
 import { ThemeProvider } from './core/theme/ThemeProvider';
-import { useTheme } from './core/hooks/useTheme';
 import { useMultiService } from './features/multi-service/hooks/useMultiService';
 import { useImageExport } from './core/hooks/useImageExport';
 import { AttendanceForm } from './features/attendance/components/AttendanceForm';
@@ -16,13 +15,12 @@ import { ServiceTabs } from './features/multi-service/components/ServiceTabs';
 import { ServiceManager } from './features/multi-service/components/ServiceManager';
 import { BatchExport } from './features/multi-service/components/BatchExport';
 import { DEFAULT_RESOLUTION } from './core/config/constants';
-import { FaChalkboard, FaChartBar, FaConciergeBell, FaListAlt } from "react-icons/fa";
+import { FaChartBar, FaListAlt } from "react-icons/fa";
 import './App.css';
 import './features/multi-service/components/MultiService.css';
-import { IoReloadSharp, IoSettings, IoSettingsSharp } from 'react-icons/io5';
+import { IoReloadSharp, IoSettingsSharp } from 'react-icons/io5';
 
 const AppContent = () => {
-  const { theme } = useTheme();
   const multiService = useMultiService();
   const { exportImage, isExporting, exportError } = useImageExport();
   
@@ -214,7 +212,6 @@ const AppContent = () => {
       <SlidePreview
         data={currentData}
         total={currentTotal}
-        theme={theme}
         resolution={DEFAULT_RESOLUTION}
         id="slide-preview"
       />

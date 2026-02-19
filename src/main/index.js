@@ -47,24 +47,50 @@ const ensureDirectories = () => {
   });
 };
 
-// Escanear recursos
+// Mime type según extensión
+const getMimeType = (filename) => {
+  const ext = path.extname(filename).toLowerCase();
+  const map = {
+    '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
+    '.png': 'image/png', '.webp': 'image/webp',
+    '.svg': 'image/svg+xml',
+    '.ttf': 'font/ttf', '.otf': 'font/otf',
+    '.woff': 'font/woff', '.woff2': 'font/woff2'
+  };
+  return map[ext] || 'application/octet-stream';
+};
+
+// Escanear recursos — devuelve base64 para imágenes, file:// para fuentes
 const scanResourcesInDirectory = (dirPath, extensions) => {
-  if (!fs.existsSync(dirPath)) {
-    return [];
-  }
+  if (!fs.existsSync(dirPath)) return [];
 
   try {
-    const files = fs.readdirSync(dirPath);
-    return files
-      .filter(file => {
-        const ext = path.extname(file).toLowerCase();
-        return extensions.includes(ext);
+    return fs.readdirSync(dirPath)
+      .filter(file => extensions.includes(path.extname(file).toLowerCase()))
+      .map(file => {
+        const filePath = join(dirPath, file);
+        const mime = getMimeType(file);
+        // Para imágenes y logos, devolver base64 directamente
+        if (mime.startsWith('image/')) {
+          try {
+            const data = fs.readFileSync(filePath).toString('base64');
+            return {
+              name: file,
+              path: filePath,
+              url: `data:${mime};base64,${data}`
+            };
+          } catch {
+            return null;
+          }
+        }
+        // Para fuentes usar file://
+        return {
+          name: file,
+          path: filePath,
+          url: `file://${filePath.replace(/\\/g, '/')}`
+        };
       })
-      .map(file => ({
-        name: file,
-        path: join(dirPath, file),
-        url: `file://${join(dirPath, file).replace(/\\/g, '/')}`
-      }));
+      .filter(Boolean);
   } catch (error) {
     console.error('Error escaneando directorio:', error);
     return [];
@@ -199,12 +225,16 @@ app.whenReady().then(() => {
 
       console.log(`✅ Recurso guardado: ${name}`);
 
+      // Devolver base64 para que el renderer pueda usarlo directamente
+      const mime = getMimeType(name);
+      const savedData = fs.readFileSync(targetPath).toString('base64');
+
       return {
         success: true,
         resource: {
           name,
           path: targetPath,
-          url: `file://${targetPath.replace(/\\/g, '/')}`
+          url: `data:${mime};base64,${savedData}`
         }
       };
     } catch (error) {

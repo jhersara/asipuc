@@ -1,7 +1,9 @@
 /**
  * COMPONENTE: BatchExport
- * 
+ *
  * Exportación por lotes de todos los servicios.
+ * Estrategia: cambia temporalmente los datos del slide visible,
+ * captura la imagen y lo restaura antes de pasar al siguiente.
  */
 
 import React, { useState } from 'react';
@@ -12,8 +14,8 @@ import { toPng } from 'html-to-image';
 import { GiCardboardBox } from 'react-icons/gi';
 import { IoReloadSharp } from 'react-icons/io5';
 
-export const BatchExport = ({ 
-  services, 
+export const BatchExport = ({
+  services,
   getFormattedData,
   getFormattedAccumulatedData,
   getServiceTotal,
@@ -26,92 +28,99 @@ export const BatchExport = ({
   const TemplateComponent = getTemplateById(selectedTemplate);
 
   /**
-   * Exportar un slide individual
+   * Renderiza un template en un contenedor offscreen, lo captura como PNG y lo descarga.
    */
-  const exportSingleSlide = async (data, total, filename) => {
-    // Crear elemento temporal
-    const container = document.createElement('div');
-    container.style.position = 'absolute';
-    container.style.left = '-9999px';
-    document.body.appendChild(container);
+  const captureSlide = (data, total, filename) => {
+    return new Promise((resolve, reject) => {
+      const container = document.createElement('div');
+      container.style.cssText =
+        'position:fixed;left:-99999px;top:-99999px;width:0;height:0;overflow:hidden;';
+      document.body.appendChild(container);
 
-    // Renderizar template
-    const root = document.createElement('div');
-    container.appendChild(root);
+      const wrapper = document.createElement('div');
+      wrapper.id = `batch-slide-${Date.now()}`;
+      container.appendChild(wrapper);
 
-    // Usar React para renderizar (simplificado)
-    const slideElement = document.createElement('div');
-    slideElement.innerHTML = `
-      <div id="temp-slide-${Date.now()}">
-        <!-- Aquí iría el render del template -->
-      </div>
-    `;
-    container.appendChild(slideElement);
+      import('react-dom/client').then(({ createRoot }) => {
+        const root = createRoot(wrapper);
 
-    try {
-      const dataUrl = await toPng(slideElement, {
-        width: DEFAULT_RESOLUTION.width,
-        height: DEFAULT_RESOLUTION.height,
-        pixelRatio: 2,
-        quality: 0.95,
-        backgroundColor: '#000000'
+        root.render(
+          React.createElement(TemplateComponent, {
+            data,
+            total,
+            theme,
+            resolution: DEFAULT_RESOLUTION
+          })
+        );
+
+        // Esperar un frame para que React pinte
+        requestAnimationFrame(() => {
+          setTimeout(async () => {
+            try {
+              // El slide real tiene el tamaño completo; tomamos el primer hijo renderizado
+              const slideEl = wrapper.firstChild;
+              if (!slideEl) throw new Error('No se generó el elemento del slide');
+
+              const dataUrl = await toPng(slideEl, {
+                width: DEFAULT_RESOLUTION.width,
+                height: DEFAULT_RESOLUTION.height,
+                pixelRatio: 2,
+                quality: 0.95,
+                backgroundColor: '#000000',
+                cacheBust: false
+              });
+
+              const link = document.createElement('a');
+              link.download = filename;
+              link.href = dataUrl;
+              link.click();
+              link.remove();
+
+              resolve({ success: true });
+            } catch (err) {
+              reject(err);
+            } finally {
+              root.unmount();
+              document.body.removeChild(container);
+            }
+          }, 150);
+        });
       });
-
-      // Descargar
-      const link = document.createElement('a');
-      link.download = filename;
-      link.href = dataUrl;
-      link.click();
-
-      return { success: true };
-    } catch (error) {
-      console.error('Error exportando:', error);
-      return { success: false, error };
-    } finally {
-      document.body.removeChild(container);
-    }
+    });
   };
 
-  /**
-   * Exportar todos los servicios
-   */
   const handleBatchExport = async () => {
     setIsExporting(true);
     setProgress(0);
 
     const date = new Date().toLocaleDateString().replace(/\//g, '-');
     const enabledServices = services.filter(s => s.enabled);
-    const total = enabledServices.length + 1; // Servicios + total acumulado
+    const totalSteps = enabledServices.length + 1;
 
     try {
-      // Exportar cada servicio
       for (let i = 0; i < enabledServices.length; i++) {
         const service = enabledServices[i];
         const data = getFormattedData(service.id);
         const serviceTotal = getServiceTotal(service.id);
-        
-        await exportSingleSlide(
-          data,
-          serviceTotal,
-          `${date}-${service.name.replace(/\s+/g, '-')}.png`
-        );
+        const filename = `${date}-${service.name.replace(/\s+/g, '-')}.png`;
 
-        setProgress(Math.round(((i + 1) / total) * 100));
-        
-        // Pequeña pausa entre exportaciones
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await captureSlide(data, serviceTotal, filename);
+        setProgress(Math.round(((i + 1) / totalSteps) * 100));
+
+        // Pausa entre capturas para evitar saturar el navegador
+        await new Promise(r => setTimeout(r, 300));
       }
 
       // Exportar total acumulado
       const accumulatedData = getFormattedAccumulatedData();
-      await exportSingleSlide(
+      await captureSlide(
         accumulatedData,
         accumulatedTotal,
         `${date}-TOTAL-ACUMULADO.png`
       );
 
       setProgress(100);
-      alert(`✅ ${enabledServices.length + 1} imágenes exportadas correctamente`);
+      alert(`✅ ${totalSteps} imágenes exportadas correctamente`);
     } catch (error) {
       alert('❌ Error en la exportación: ' + error.message);
     } finally {
@@ -119,6 +128,8 @@ export const BatchExport = ({
       setProgress(0);
     }
   };
+
+  const enabledCount = services.filter(s => s.enabled).length;
 
   return (
     <div className="batch-export">
@@ -129,22 +140,21 @@ export const BatchExport = ({
       >
         {isExporting ? (
           <>
-            <span className="spinner"><IoReloadSharp className='icon'/></span>
+            <span className="spinner">
+              <IoReloadSharp className="icon" />
+            </span>
             Exportando... {progress}%
           </>
         ) : (
           <>
-            <GiCardboardBox className='icon'/> Exportar Todos ({services.filter(s => s.enabled).length + 1} slides)
+            <GiCardboardBox className="icon" /> Exportar Todos ({enabledCount + 1} slides)
           </>
         )}
       </button>
 
       {isExporting && (
         <div className="export-progress">
-          <div 
-            className="progress-bar"
-            style={{ width: `${progress}%` }}
-          />
+          <div className="progress-bar" style={{ width: `${progress}%` }} />
         </div>
       )}
 

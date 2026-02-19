@@ -285,6 +285,72 @@
   font-size: 13px;
 }
 
+.upload-warning {
+  margin-top: 10px;
+  padding: 10px;
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  color: #ffc107;
+  font-size: 13px;
+}
+
+/* ========================================
+   DROP ZONE (BackgroundSelector / BackgroundUploader)
+   ======================================== */
+.drop-zone {
+  border: 2px dashed #555;
+  border-radius: 8px;
+  padding: 24px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  background: rgba(255, 255, 255, 0.02);
+  margin-bottom: 8px;
+}
+
+.drop-zone.dragging {
+  border-color: #28a745;
+  background: rgba(40, 167, 69, 0.08);
+}
+
+.drop-zone .upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #aaa;
+}
+
+.drop-zone .upload-placeholder p {
+  margin: 0;
+  font-size: 15px;
+  color: #ddd;
+  font-weight: 500;
+}
+
+.drop-zone .upload-placeholder span {
+  font-size: 13px;
+  color: #777;
+}
+
+.btn-upload-inline {
+  display: inline-block;
+  padding: 8px 18px;
+  background: rgba(0, 123, 255, 0.15);
+  border: 1px solid #007bff;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-upload-inline:hover {
+  background: rgba(0, 123, 255, 0.3);
+}
+
 /* ========================================
    BACKGROUNDS GALLERY
    ======================================== */

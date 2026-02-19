@@ -16,6 +16,7 @@ export const BackgroundUploader = ({
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [warning, setWarning] = useState(null);
   const [preview, setPreview] = useState(currentBackground);
 
   const handleFile = async (file) => {
@@ -23,25 +24,21 @@ export const BackgroundUploader = ({
     setError(null);
 
     try {
-      // Primero validar dimensiones
       const validation = await fileManagerService.validateBackgroundImage(file);
       
       if (!validation.isValid) {
-        // Si no es 1920x1080, ofrecer redimensionar
-        const shouldResize = window.confirm(
-          `${validation.errors.join('\\n')}\\n\\n¿Deseas redimensionar automáticamente a 1920x1080?`
-        );
-
-        if (shouldResize) {
-          file = await fileManagerService.resizeImageTo1920x1080(file);
-        } else {
-          setError(validation.errors.join(', '));
-          setIsLoading(false);
-          return;
-        }
+        setError(validation.errors.join(', '));
+        setIsLoading(false);
+        return;
       }
 
-      // Cargar la imagen
+      // Mostrar advertencia de resolución sin bloquear la carga
+      if (validation.warnings && validation.warnings.length > 0) {
+        setWarning(validation.warnings[0]);
+      } else {
+        setWarning(null);
+      }
+
       const result = await fileManagerService.loadBackgroundImage(file);
 
       if (result.success) {
@@ -132,6 +129,13 @@ export const BackgroundUploader = ({
       {error && (
         <div className="upload-error">
           ⚠️ {error}
+        </div>
+      )}
+
+      {/* Advertencias (no bloquean la carga) */}
+      {!error && warning && (
+        <div className="upload-warning">
+          ⚠️ {warning}
         </div>
       )}
     </div>

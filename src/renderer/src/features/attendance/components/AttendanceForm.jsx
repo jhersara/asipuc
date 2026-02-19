@@ -8,7 +8,6 @@
 import React from 'react';
 import { CategoryInput } from './CategoryInput';
 import { TotalDisplay } from './TotalDisplay';
-import { ATTENDANCE_CATEGORIES } from '../../../core/config/constants';
 
 export const AttendanceForm = ({
   data,
@@ -18,26 +17,15 @@ export const AttendanceForm = ({
   onExport,
   isSaving = false
 }) => {
-  const handleSave = async () => {
-    const result = await onSave();
-    if (result.success) {
-      alert('¡Datos guardados correctamente!');
-    } else {
-      alert('Error al guardar: ' + result.error);
-    }
-  };
-
   return (
-    <div className="control-panel">
-      <h2 className="panel-title">REGISTRO DE ASISTENCIA</h2>
-
+    <>
       <div className="inputs-container">
-        {ATTENDANCE_CATEGORIES.map(category => (
+        {data.map(item => (
           <CategoryInput
-            key={category.key}
-            name={category.key}
-            label={category.label}
-            value={data[category.key]}
+            key={item.key}
+            name={item.key}
+            label={item.label}
+            value={item.value}
             onChange={onFieldChange}
             disabled={isSaving}
           />
@@ -51,7 +39,7 @@ export const AttendanceForm = ({
       <div className="actions-container">
         <button 
           className="btn-action btn-primary"
-          onClick={handleSave}
+          onClick={onSave}
           disabled={isSaving}
         >
           {isSaving ? 'Guardando...' : 'Guardar Asistencia'}
@@ -65,6 +53,6 @@ export const AttendanceForm = ({
           Descargar Imagen
         </button>
       </div>
-    </div>
+    </>
   );
 };

@@ -8,7 +8,9 @@
  * - Conversión a base64
  */
 
-import { FILE_LIMITS } from '../../../core/config/constants';
+import { MAX_FILE_SIZES, SUPPORTED_FORMATS } from '../../../core/config/constants';
+
+const ACCEPTED_IMAGE_FORMATS = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
 class FileManagerService {
   /**
@@ -17,9 +19,8 @@ class FileManagerService {
   validateImageFile(file) {
     const errors = [];
 
-    // Validar tipo
-    if (!FILE_LIMITS.ACCEPTED_IMAGE_FORMATS.includes(file.type)) {
-      errors.push(`Formato no válido. Usa: ${FILE_LIMITS.ACCEPTED_IMAGE_FORMATS.join(', ')}`);
+    if (!ACCEPTED_IMAGE_FORMATS.includes(file.type)) {
+      errors.push(`Formato no válido. Usa: ${ACCEPTED_IMAGE_FORMATS.join(', ')}`);
     }
 
     return {
@@ -29,7 +30,7 @@ class FileManagerService {
   }
 
   /**
-   * Validar imagen de fondo (debe ser 1920x1080)
+   * Validar imagen de fondo
    */
   async validateBackgroundImage(file) {
     const validation = this.validateImageFile(file);
@@ -38,26 +39,25 @@ class FileManagerService {
       return validation;
     }
 
-    // Validar tamaño de archivo
-    if (file.size > FILE_LIMITS.MAX_BACKGROUND_SIZE) {
+    if (file.size > MAX_FILE_SIZES.IMAGE) {
       validation.errors.push(
-        `Archivo muy grande. Máximo ${FILE_LIMITS.MAX_BACKGROUND_SIZE / 1024 / 1024}MB`
+        `Archivo muy grande. Máximo ${MAX_FILE_SIZES.IMAGE / 1024 / 1024}MB`
       );
       validation.isValid = false;
     }
 
-    // Validar dimensiones
+    // Advertir si la resolución es menor a Full HD (no bloquea la carga)
     try {
       const dimensions = await this.getImageDimensions(file);
       
-      if (dimensions.width !== 1920 || dimensions.height !== 1080) {
-        validation.errors.push(
-          `La imagen debe ser 1920x1080px. Tu imagen es ${dimensions.width}x${dimensions.height}px`
+      if (dimensions.width < 1920 || dimensions.height < 1080) {
+        validation.warnings = validation.warnings || [];
+        validation.warnings.push(
+          `Resolución recomendada: 1920x1080px. Tu imagen es ${dimensions.width}x${dimensions.height}px. Puede verse pixelada al exportar.`
         );
-        validation.isValid = false;
       }
     } catch (error) {
-      validation.errors.push('Error al validar dimensiones de la imagen');
+      validation.errors.push('Error al leer las dimensiones de la imagen');
       validation.isValid = false;
     }
 
@@ -74,10 +74,9 @@ class FileManagerService {
       return validation;
     }
 
-    // Validar tamaño
-    if (file.size > FILE_LIMITS.MAX_LOGO_SIZE) {
+    if (file.size > MAX_FILE_SIZES.LOGO) {
       validation.errors.push(
-        `Archivo muy grande. Máximo ${FILE_LIMITS.MAX_LOGO_SIZE / 1024 / 1024}MB`
+        `Archivo muy grande. Máximo ${MAX_FILE_SIZES.LOGO / 1024 / 1024}MB`
       );
       validation.isValid = false;
     }
@@ -149,6 +148,7 @@ class FileManagerService {
 
       return {
         success: true,
+        warnings: validation.warnings || [],
         data: {
           url: base64,
           name: file.name,
