@@ -18,7 +18,7 @@ export const DEFAULT_RESOLUTION = IMAGE_RESOLUTIONS.FULL_HD;
 
 // Categorías de asistencia
 export const ATTENDANCE_CATEGORIES = [
-  { key: 'ancianos', label: 'ANCIANO', order: 1 },
+  { key: 'ancianos', label: 'ANCIANOS', order: 1 },
   { key: 'adultos', label: 'ADULTOS', order: 2 },
   { key: 'jovenes', label: 'JÓVENES', order: 3 },
   { key: 'adolescentes', label: 'ADOLESCENTES', order: 4 },

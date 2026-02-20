@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useResources } from '../hooks/useResources';
 import { useTheme } from '../../../core/hooks/useTheme';
 import { fileManagerService } from '../services/fileManagerService';
 import { FiCheck } from 'react-icons/fi';
 
 export const BackgroundSelector = () => {
-  const { getAllBackgrounds, isLoading } = useResources();
+  const { getAllBackgrounds, uploadFile, loadResources, isLoading } = useResources();
   const { updateBackgroundImage, theme } = useTheme();
 
   const [selectedBackground, setSelectedBackground] = useState(theme.backgroundImage);
@@ -32,6 +32,7 @@ export const BackgroundSelector = () => {
     setUploadError(null);
     setUploadWarning(null);
 
+    // 1. Validar y convertir a base64
     const result = await fileManagerService.loadBackgroundImage(file);
 
     if (!result.success) {
@@ -44,7 +45,13 @@ export const BackgroundSelector = () => {
       setUploadWarning(result.warnings[0]);
     }
 
-    handleSelectBackground(result.data.url);
+    // 2. Guardar en disco (resources/user-uploads/backgrounds/)
+    //    uploadFile ya llama loadResources al terminar, refrescando la galería
+    const saved = await uploadFile(file, 'background');
+
+    // 3. Aplicar al tema con la URL base64 persistente
+    const finalUrl = saved?.success ? saved.resource.url : result.data.url;
+    handleSelectBackground(finalUrl);
     setIsUploading(false);
   };
 
