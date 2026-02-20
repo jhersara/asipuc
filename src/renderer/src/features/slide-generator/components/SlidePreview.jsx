@@ -17,19 +17,16 @@ export const SlidePreview = ({
   const slideRef = useRef(null);
   const { theme, selectedTemplate } = useTheme();
 
-  // Obtener el componente del template seleccionado
   const TemplateComponent = getTemplateById(selectedTemplate);
 
   return (
-    <div className="slide-preview-container">
-      <div id={id} ref={slideRef}>
-        <TemplateComponent
-          data={data}
-          total={total}
-          theme={theme}
-          resolution={resolution}
-        />
-      </div>
+    <div id={id} ref={slideRef}>
+      <TemplateComponent
+        data={data}
+        total={total}
+        theme={theme}
+        resolution={resolution}
+      />
     </div>
   );
 };

@@ -104,7 +104,7 @@ const AppContent = () => {
       </button>
 
       {/* Panel de control izquierdo */}
-      <div className="control-panel">
+      <div className={`control-panel ${showSettings ? 'control-panel--hidden' : ''}`}>
         <h2 className="panel-title">Asistencia del Día</h2>
 
         {/* Tabs de servicios */}
@@ -208,13 +208,19 @@ const AppContent = () => {
         </div>
       </div>
 
-      {/* Vista previa del slide derecho */}
-      <SlidePreview
-        data={currentData}
-        total={currentTotal}
-        resolution={DEFAULT_RESOLUTION}
-        id="slide-preview"
-      />
+      {/* Vista previa del slide */}
+      <div className={[
+        'slide-preview-container',
+        !showSettings && 'with-control-panel',
+        !showSettings && 'settings-closed'
+      ].filter(Boolean).join(' ')}>
+        <SlidePreview
+          data={currentData}
+          total={currentTotal}
+          resolution={DEFAULT_RESOLUTION}
+          id="slide-preview"
+        />
+      </div>
 
       {/* Panel de gestión de servicios */}
       {showServiceManager && (

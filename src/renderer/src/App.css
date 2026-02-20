@@ -69,16 +69,28 @@ body {
    PANEL DE CONTROL (IZQUIERDA)
    ======================================== */
 .control-panel {
+  position: fixed;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
   background: var(--control-bg);
   padding: 20px;
   border-radius: var(--border-radius);
-  width: 560px;
+  width: 380px;
   max-height: 95vh;
   display: flex;
   flex-direction: column;
   gap: 15px;
   overflow-y: auto;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  z-index: 50;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.control-panel--hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%) translateX(-420px);
 }
 
 .panel-title {
@@ -224,20 +236,43 @@ body {
 }
 
 /* ========================================
-   PREVIEW DEL SLIDE (DERECHA)
+   PREVIEW DEL SLIDE
    ======================================== */
 .slide-preview-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 480px; /* espacio para panel configuración */
+  bottom: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  max-height: 90vh;
   overflow: hidden;
+  transition: right 0.3s ease, left 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Panel asistencia visible + configuración abierta: slide en el medio */
+.slide-preview-container.with-control-panel {
+  left: 420px;
+}
+
+/* Solo configuración abierta (sin panel asistencia): ocupa todo menos el panel */
+/* es el estado por defecto, left:0 right:480px */
+
+/* Panel asistencia visible + configuración cerrada: slide ocupa todo menos panel asistencia */
+.slide-preview-container.with-control-panel.settings-closed {
+  left: 420px;
+  right: 0;
 }
 
 #slide-preview {
   transform: scale(0.5);
-  transform-origin: center;
+  transform-origin: center center;
+  margin: -270px -480px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+  pointer-events: all;
 }
 
 /* ========================================
@@ -326,19 +361,16 @@ body {
 @media (max-width: 1600px) {
   #slide-preview {
     transform: scale(0.4);
+    margin: -324px -576px;
   }
 }
 
 @media (max-width: 1200px) {
-  .app-container {
-    flex-direction: column;
-    overflow-y: auto;
-  }
-  
   #slide-preview {
     transform: scale(0.3);
+    margin: -378px -672px;
   }
-  
+
   .btn-settings-float {
     right: 5px;
     width: 50px;
