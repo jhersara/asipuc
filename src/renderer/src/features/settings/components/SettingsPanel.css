@@ -311,9 +311,15 @@
   padding: 24px 20px;
   text-align: center;
   cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
   background: rgba(255, 255, 255, 0.02);
   margin-bottom: 8px;
+  position: relative;
+}
+
+.drop-zone:hover {
+  border-color: #007bff;
+  background: rgba(0, 123, 255, 0.04);
 }
 
 .drop-zone.dragging {
@@ -327,6 +333,13 @@
   align-items: center;
   gap: 8px;
   color: #aaa;
+  /* Evitar que los hijos capturen eventos de drag */
+  pointer-events: none;
+}
+
+/* El label necesita pointer-events para el click del file input */
+.drop-zone .upload-placeholder .btn-upload-inline {
+  pointer-events: all;
 }
 
 .drop-zone .upload-placeholder p {

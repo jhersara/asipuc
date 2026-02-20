@@ -54,8 +54,24 @@ export const BackgroundSelector = () => {
     e.target.value = '';
   };
 
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Solo desactivar si el cursor sale del contenedor real, no de un hijo
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      setIsDragging(false);
+    }
+  };
+
   const handleDrop = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(false);
     const file = e.dataTransfer.files[0];
     if (file) processFile(file);
@@ -68,8 +84,9 @@ export const BackgroundSelector = () => {
       {/* Zona de carga */}
       <div
         className={`drop-zone ${isDragging ? 'dragging' : ''}`}
-        onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-        onDragLeave={() => setIsDragging(false)}
+        onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
         {isUploading ? (

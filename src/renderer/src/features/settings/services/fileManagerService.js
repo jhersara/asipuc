@@ -46,19 +46,17 @@ class FileManagerService {
       validation.isValid = false;
     }
 
-    // Advertir si la resolución es menor a Full HD (no bloquea la carga)
+    // Advertir si la resolución es menor a Full HD — nunca bloquea la carga
     try {
       const dimensions = await this.getImageDimensions(file);
-      
       if (dimensions.width < 1920 || dimensions.height < 1080) {
         validation.warnings = validation.warnings || [];
         validation.warnings.push(
-          `Resolución recomendada: 1920x1080px. Tu imagen es ${dimensions.width}x${dimensions.height}px. Puede verse pixelada al exportar.`
+          `Resolución ${dimensions.width}x${dimensions.height}px. Recomendado 1920x1080px.`
         );
       }
-    } catch (error) {
-      validation.errors.push('Error al leer las dimensiones de la imagen');
-      validation.isValid = false;
+    } catch {
+      // Silencioso — si no se pueden leer las dimensiones, no importa
     }
 
     return validation;
@@ -85,27 +83,25 @@ class FileManagerService {
   }
 
   /**
-   * Obtener dimensiones de una imagen
+   * Obtener dimensiones de una imagen desde base64
    */
-  getImageDimensions(file) {
+  getImageDimensions(fileOrBase64) {
     return new Promise((resolve, reject) => {
       const img = new Image();
-      const url = URL.createObjectURL(file);
 
-      img.onload = () => {
-        URL.revokeObjectURL(url);
-        resolve({
-          width: img.naturalWidth,
-          height: img.naturalHeight
-        });
-      };
+      img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
+      img.onerror = () => reject(new Error('Error al cargar la imagen'));
 
-      img.onerror = () => {
-        URL.revokeObjectURL(url);
-        reject(new Error('Error al cargar la imagen'));
-      };
-
-      img.src = url;
+      if (typeof fileOrBase64 === 'string') {
+        // Ya es base64 o URL
+        img.src = fileOrBase64;
+      } else {
+        // Es un File — leer como base64 primero (más compatible con Electron)
+        const reader = new FileReader();
+        reader.onload = (e) => { img.src = e.target.result; };
+        reader.onerror = () => reject(new Error('Error al leer el archivo'));
+        reader.readAsDataURL(fileOrBase64);
+      }
     });
   }
 
