@@ -65,7 +65,7 @@ const AppContent = () => {
     });
 
     if (result.success) {
-      console.log('✅ Imagen exportada:', filename);
+      console.log(' Imagen exportada:', filename);
     } else {
       alert('Error al exportar: ' + result.error);
     }
@@ -77,9 +77,9 @@ const AppContent = () => {
   const handleSaveAll = async () => {
     const result = await multiService.saveAll();
     if (result.success) {
-      alert('✅ Todos los servicios guardados en la base de datos');
+      alert(' Todos los servicios guardados en la base de datos');
     } else {
-      alert('❌ Error al guardar: ' + result.error);
+      alert(' Error al guardar: ' + result.error);
     }
   };
 

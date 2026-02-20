@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useResources } from '../hooks/useResources';
 import { useTheme } from '../../../core/hooks/useTheme';
 import { fileManagerService } from '../services/fileManagerService';
+import { FiCheck } from 'react-icons/fi';
 
 export const BackgroundSelector = () => {
   const { getAllBackgrounds, isLoading } = useResources();
@@ -94,8 +95,8 @@ export const BackgroundSelector = () => {
         )}
       </div>
 
-      {uploadError && <div className="upload-error">⚠️ {uploadError}</div>}
-      {uploadWarning && !uploadError && <div className="upload-warning">⚠️ {uploadWarning}</div>}
+      {uploadError && <div className="upload-error"> {uploadError}</div>}
+      {uploadWarning && !uploadError && <div className="upload-warning"> {uploadWarning}</div>}
 
       {/* Galería */}
       <div className="backgrounds-gallery">
@@ -120,7 +121,7 @@ export const BackgroundSelector = () => {
                 <img src={bg.url} alt={bg.name} />
                 <div className="background-name">{bg.name}</div>
                 {selectedBackground === bg.url && (
-                  <div className="selected-badge">✓</div>
+                  <div className="selected-badge"> <FiCheck className='icon'/> </div>
                 )}
               </div>
             ))}

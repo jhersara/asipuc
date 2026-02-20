@@ -7,6 +7,7 @@
 import React, { useState } from 'react';
 import { useTheme } from '../../../core/hooks/useTheme';
 import { getAllTemplates, TEMPLATE_CATEGORIES } from '../../slide-generator/templates';
+import { FiAlertOctagon, FiCheckCircle } from 'react-icons/fi';
 
 export const TemplateSelector = () => {
   const { selectedTemplate, changeTemplate } = useTheme();
@@ -106,7 +107,7 @@ export const TemplateSelector = () => {
                     
                     {selectedTemplate === template.id && (
                       <div className="selected-overlay">
-                        <span className="check-icon">✓</span>
+                        <span className="check-icon"><FiCheckCircle/></span>
                       </div>
                     )}
                   </div>
@@ -120,7 +121,6 @@ export const TemplateSelector = () => {
                   {/* Badge de seleccionado */}
                   {selectedTemplate === template.id && (
                     <div className="selected-badge">
-                      Activo
                     </div>
                   )}
                 </div>
@@ -132,7 +132,7 @@ export const TemplateSelector = () => {
 
       {/* Preview del template seleccionado */}
       <div className="current-template-info">
-        <div className="info-icon">ℹ️</div>
+        <div className="info-icon"><FiAlertOctagon/></div>
         <div>
           <strong>Template Actual:</strong>{' '}
           {templates.find(t => t.id === selectedTemplate)?.name}

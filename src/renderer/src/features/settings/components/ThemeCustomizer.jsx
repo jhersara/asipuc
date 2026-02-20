@@ -9,6 +9,7 @@ import { useTheme } from '../../../core/hooks/useTheme';
 import { ColorPicker } from './ColorPicker';
 import { FontSelector } from './FontSelector';
 import { SizeSlider } from './SizeSlider';
+import { FiAlertCircle, FiCrop, FiLayers, FiRefreshCcw, FiType } from 'react-icons/fi';
 
 export const ThemeCustomizer = () => {
   const { 
@@ -29,7 +30,7 @@ export const ThemeCustomizer = () => {
 
       {/* COLORES */}
       <div className="customizer-section">
-        <h4 className="subsection-title">🎨 Colores</h4>
+        <h4 className="subsection-title"><FiLayers/> Colores </h4>
         
         <ColorPicker
           label="Color del Texto"
@@ -58,7 +59,7 @@ export const ThemeCustomizer = () => {
 
       {/* FUENTES */}
       <div className="customizer-section">
-        <h4 className="subsection-title">✍️ Fuentes</h4>
+        <h4 className="subsection-title"><FiType/> Fuentes</h4>
         
         <FontSelector
           label="Fuente del Título"
@@ -77,7 +78,7 @@ export const ThemeCustomizer = () => {
 
       {/* TAMAÑOS */}
       <div className="customizer-section">
-        <h4 className="subsection-title">📏 Tamaños de Texto</h4>
+        <h4 className="subsection-title"><FiCrop/> Tamaños de Texto</h4>
         
         <SizeSlider
           label="Tamaño del Título"
@@ -126,13 +127,13 @@ export const ThemeCustomizer = () => {
           className="btn-reset"
           onClick={resetTheme}
         >
-          🔄 Restaurar Valores por Defecto
+          <FiRefreshCcw/> Restaurar Valores por Defecto
         </button>
       </div>
 
       {/* NOTA */}
       <div className="customizer-note">
-        <div className="note-icon">💡</div>
+        <div className="note-icon"><FiAlertCircle/></div>
         <div className="note-text">
           <strong>Tip:</strong> Los cambios se aplican instantáneamente al slide. 
           Experimenta hasta encontrar el diseño perfecto!

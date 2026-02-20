@@ -6,6 +6,7 @@
 
 import React, { useState } from 'react';
 import { useTheme } from '../../../core/hooks/useTheme';
+import { FiArrowDown, FiArrowUp, FiDelete, FiSave } from 'react-icons/fi';
 
 export const ConfigManager = () => {
   const { theme, customConfig, updateCustomTheme } = useTheme();
@@ -112,7 +113,7 @@ export const ConfigManager = () => {
 
   return (
     <div className="config-manager">
-      <h3 className="section-title">💾 Gestión de Configuraciones</h3>
+      <h3 className="section-title"><FiSave/> Gestión de Configuraciones</h3>
 
       {/* Export/Import */}
       <div className="config-section">
@@ -123,11 +124,11 @@ export const ConfigManager = () => {
             className="btn-config btn-export"
             onClick={handleExport}
           >
-            📤 Exportar Configuración
+            <FiArrowUp className='icon'/> Exportar Configuración
           </button>
 
           <label className="btn-config btn-import">
-            📥 Importar Configuración
+            <FiArrowDown className='icon'/> Importar Configuración
             <input
               type="file"
               accept=".json"
@@ -153,7 +154,7 @@ export const ConfigManager = () => {
             className="btn-config btn-new-preset"
             onClick={() => setShowSaveDialog(true)}
           >
-            ➕ Guardar Configuración Actual
+            <FiSave/> Guardar Configuración Actual
           </button>
         ) : (
           <div className="save-preset-dialog">
@@ -208,7 +209,7 @@ export const ConfigManager = () => {
                     className="btn-delete-preset"
                     onClick={() => handleDeletePreset(preset.id)}
                   >
-                    🗑️
+                    <FiDelete/>
                   </button>
                 </div>
               </div>

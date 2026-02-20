@@ -55,6 +55,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  display: flex;
+  align-content: center;
+  align-items: center;
+
+}
+.settings-header .icon {
+  font-size: 20px;
 }
 
 .settings-header h2 {
@@ -429,12 +436,13 @@
 
 .selected-badge {
   position: absolute;
-  top: 5px;
-  right: 5px;
-  background: #28a745;
+  top: 3px;
+  right: 3px;
+  background: #28a74675;
+  border: 1px solid #28a745;
   color: white;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -442,7 +450,9 @@
   font-weight: bold;
   font-size: 14px;
 }
-
+.selected-badge .icon{
+  font-size: 10px;
+}
 .btn-clear {
   width: 100%;
   padding: 10px;

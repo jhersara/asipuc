@@ -14,6 +14,7 @@ import { ConfigManager } from './ConfigManager';
 import './SettingsPanel.css';
 import './TemplateSelector.css';
 import './ThemeCustomizer.css';
+import { FiAirplay, FiArchive, FiBookOpen, FiFlag, FiGrid, FiHash, FiImage, FiSettings } from 'react-icons/fi';
 
 export const SettingsPanel = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState('template');
@@ -21,12 +22,12 @@ export const SettingsPanel = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const tabs = [
-    { id: 'template', label: 'Diseño', icon: '🎨' },
-    { id: 'customize', label: 'Personalizar', icon: '🎯' },
-    { id: 'background', label: 'Fondo', icon: '🖼️' },
-    { id: 'logos', label: 'Logos', icon: '🏷️' },
-    { id: 'hashtag', label: 'Hashtag', icon: '#️⃣' },
-    { id: 'config', label: 'Guardar', icon: '💾' }
+    { id: 'template', label: 'Diseño', icon: (<FiBookOpen/>) },
+    { id: 'customize', label: 'Personalizar', icon: (<FiGrid/>) },
+    { id: 'background', label: 'Fondo', icon: (<FiImage/>)},
+    { id: 'logos', label: 'Logos', icon: (<FiAirplay/>) },
+    { id: 'hashtag', label: 'Hashtag', icon: (<FiHash/>) },
+    { id: 'config', label: 'Guardar', icon: (<FiArchive/>) }
   ];
 
   return (
@@ -38,7 +39,7 @@ export const SettingsPanel = ({ isOpen, onClose }) => {
       <div className="settings-panel">
         {/* Header */}
         <div className="settings-header">
-          <h2>⚙️ Configuración</h2>
+          <h2><FiSettings className='icon'/> Configuración</h2>
           <button className="btn-close" onClick={onClose}>
             ✕
           </button>
@@ -89,7 +90,7 @@ export const SettingsPanel = ({ isOpen, onClose }) => {
 
         {/* Footer */}
         <div className="settings-footer">
-          <p className="hint">💡 Los cambios se aplican automáticamente</p>
+          <p className="hint"> Los cambios se aplican automáticamente</p>
         </div>
       </div>
     </>
