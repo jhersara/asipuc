@@ -15,7 +15,8 @@ export const AttendanceForm = ({
   onFieldChange,
   onSave,
   onExport,
-  isSaving = false
+  isSaving = false,
+  isExporting = false
 }) => {
   return (
     <>
@@ -27,7 +28,7 @@ export const AttendanceForm = ({
             label={item.label}
             value={item.value}
             onChange={onFieldChange}
-            disabled={isSaving}
+            disabled={false} // inputs nunca se bloquean
           />
         ))}
       </div>
@@ -48,9 +49,9 @@ export const AttendanceForm = ({
         <button 
           className="btn-action btn-success"
           onClick={onExport}
-          disabled={isSaving}
+          disabled={isExporting}
         >
-          Descargar Imagen
+          {isExporting ? 'Exportando...' : 'Descargar Imagen'}
         </button>
       </div>
     </>

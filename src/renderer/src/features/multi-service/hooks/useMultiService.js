@@ -93,7 +93,7 @@ export const useMultiService = () => {
    */
   const getServiceTotal = useCallback((serviceId) => {
     const data = servicesData[serviceId] || getEmptyServiceData();
-    return Object.values(data).reduce((acc, val) => acc + Number(val), 0);
+    return Object.values(data).reduce((acc, val) => acc + (parseInt(val) || 0), 0);
   }, [servicesData]);
 
   /**
@@ -133,16 +133,19 @@ export const useMultiService = () => {
   }, [services, servicesData]);
 
   /**
-   * Actualizar un campo del servicio activo
+   * Actualizar un campo del servicio activo.
+   * Permite string vacío temporalmente para no bloquear la escritura.
+   * El valor se normaliza a número en el onBlur del input.
    */
   const updateField = useCallback((fieldName, value) => {
-    const numValue = Math.max(0, parseInt(value) || 0);
-    
+    // Si es string vacío lo guardamos tal cual (el input está siendo editado)
+    const finalValue = value === '' ? '' : Math.max(0, parseInt(value) || 0);
+
     setServicesData(prev => ({
       ...prev,
       [activeServiceId]: {
         ...(prev[activeServiceId] || getEmptyServiceData()),
-        [fieldName]: numValue
+        [fieldName]: finalValue
       }
     }));
   }, [activeServiceId]);

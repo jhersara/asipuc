@@ -19,6 +19,8 @@ import { FaChartBar, FaListAlt } from "react-icons/fa";
 import './App.css';
 import './features/multi-service/components/MultiService.css';
 import { IoReloadSharp, IoSettingsSharp } from 'react-icons/io5';
+import { useToast } from './core/hooks/useToast';
+import { ToastContainer } from './core/theme/ToastContainer';
 
 const AppContent = () => {
   const multiService = useMultiService();
@@ -27,6 +29,8 @@ const AppContent = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [showServiceManager, setShowServiceManager] = useState(false);
   const [showAccumulated, setShowAccumulated] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const { toasts, toast, removeToast } = useToast();
 
   /**
    * Datos y total a mostrar
@@ -65,9 +69,9 @@ const AppContent = () => {
     });
 
     if (result.success) {
-      console.log(' Imagen exportada:', filename);
+      toast.success('Imagen exportada', `Guardada como ${filename}`);
     } else {
-      alert('Error al exportar: ' + result.error);
+      toast.error('Error al exportar', result.error);
     }
   };
 
@@ -75,11 +79,16 @@ const AppContent = () => {
    * Guardar todos los servicios en BD
    */
   const handleSaveAll = async () => {
-    const result = await multiService.saveAll();
-    if (result.success) {
-      alert(' Todos los servicios guardados en la base de datos');
-    } else {
-      alert(' Error al guardar: ' + result.error);
+    setIsSaving(true);
+    try {
+      const result = await multiService.saveAll();
+      if (result.success) {
+        toast.success('Asistencia guardada', 'Los datos fueron guardados correctamente.');
+      } else {
+        toast.error('Error al guardar', result.error || 'Ocurrio un error inesperado.');
+      }
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -139,7 +148,8 @@ const AppContent = () => {
             onFieldChange={multiService.updateField}
             onSave={handleSaveAll}
             onExport={handleExport}
-            isSaving={isExporting}
+            isSaving={isSaving}
+            isExporting={isExporting}
           />
         ) : (
           // Vista del total acumulado (solo lectura)
@@ -197,11 +207,7 @@ const AppContent = () => {
         <div className="utility-buttons">
           <button 
             className="btn-reset-all"
-            onClick={() => {
-              if (confirm('¿Resetear TODOS los servicios? Esta acción no se puede deshacer.')) {
-                multiService.resetAll();
-              }
-            }}
+            onClick={() => multiService.resetAll()}
           >
             <IoReloadSharp className='icon'/> Resetear Todo
           </button>
@@ -249,12 +255,8 @@ const AppContent = () => {
         onClose={() => setShowSettings(false)}
       />
 
-      {/* Mensajes de error */}
-      {exportError && (
-        <div className="error-toast">
-          Error al exportar: {exportError}
-        </div>
-      )}
+      {/* Notificaciones toast */}
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   );
 };
