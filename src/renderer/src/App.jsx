@@ -24,13 +24,21 @@ import { ToastContainer } from './core/theme/ToastContainer';
 
 const AppContent = () => {
   const multiService = useMultiService();
-  const { exportImage, isExporting, exportError } = useImageExport();
-  
+  const { exportImage, isExporting } = useImageExport();
+
   const [showSettings, setShowSettings] = useState(false);
   const [showServiceManager, setShowServiceManager] = useState(false);
   const [showAccumulated, setShowAccumulated] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { toasts, toast, removeToast } = useToast();
+
+  // Servicios con totales para la vista acumulada
+  const dominicalServices = multiService.services
+    .filter(s => s.enabled)
+    .map(s => ({
+      ...s,
+      total: multiService.getServiceTotal(s.id)
+    }));
 
   /**
    * Datos y total a mostrar
@@ -223,6 +231,8 @@ const AppContent = () => {
         <SlidePreview
           data={currentData}
           total={currentTotal}
+          services={dominicalServices}
+          isAccumulated={showAccumulated}
           resolution={DEFAULT_RESOLUTION}
           id="slide-preview"
         />

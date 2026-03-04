@@ -9,15 +9,17 @@ import { ModernTemplate } from './ModernTemplate';
 import { ClassicTemplate } from './ClassicTemplate';
 import { MinimalTemplate } from './MinimalTemplate';
 import { ElegantTemplate } from './ElegantTemplate';
+import { DominicanTemplate } from './DominicanTemplate';
 
 /**
  * Registro de templates
  */
 export const TEMPLATES = {
-  modern: ModernTemplate,
-  classic: ClassicTemplate,
-  minimal: MinimalTemplate,
-  elegant: ElegantTemplate
+  modern:    ModernTemplate,
+  classic:   ClassicTemplate,
+  minimal:   MinimalTemplate,
+  elegant:   ElegantTemplate,
+  dominical: DominicanTemplate,
 };
 
 /**
