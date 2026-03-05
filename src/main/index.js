@@ -19,9 +19,22 @@ db.exec(`
     adolescentes INTEGER, ninos INTEGER, visitas INTEGER,
     total INTEGER,
     serviceName TEXT,
-    serviceTime TEXT
+    serviceTime TEXT,
+    fechaDia TEXT,
+    UNIQUE(fechaDia, serviceName)
   )
 `);
+
+// Agregar columnas nuevas si la BD ya existia (migracion segura)
+try {
+  db.exec(`ALTER TABLE asistencia ADD COLUMN serviceName TEXT`);
+} catch (_) { /* ya existe */ }
+try {
+  db.exec(`ALTER TABLE asistencia ADD COLUMN serviceTime TEXT`);
+} catch (_) { /* ya existe */ }
+try {
+  db.exec(`ALTER TABLE asistencia ADD COLUMN fechaDia TEXT`);
+} catch (_) { /* ya existe */ }
 
 // Rutas de recursos
 const RESOURCES_PATH = is.dev
@@ -105,6 +118,7 @@ function createWindow() {
     height: 900,
     show: false,
     autoHideMenuBar: true,
+    title: `ASIPUC v${app.getVersion()}`,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -146,12 +160,26 @@ app.whenReady().then(() => {
   
   ipcMain.handle('guardar-datos', (event, datos) => {
     try {
+      // fechaDia = solo la fecha sin hora, para detectar duplicados del mismo dia
+      const fechaDia = new Date(datos.fecha).toISOString().split('T')[0];
       const stmt = db.prepare(`
-        INSERT INTO asistencia (fecha, ancianos, adultos, jovenes, adolescentes, ninos, visitas, total, serviceName, serviceTime)
-        VALUES (@fecha, @ancianos, @adultos, @jovenes, @adolescentes, @ninos, @visitas, @total, @serviceName, @serviceTime)
+        INSERT INTO asistencia
+          (fecha, ancianos, adultos, jovenes, adolescentes, ninos, visitas, total, serviceName, serviceTime, fechaDia)
+        VALUES
+          (@fecha, @ancianos, @adultos, @jovenes, @adolescentes, @ninos, @visitas, @total, @serviceName, @serviceTime, @fechaDia)
+        ON CONFLICT(fechaDia, serviceName) DO UPDATE SET
+          fecha        = excluded.fecha,
+          ancianos     = excluded.ancianos,
+          adultos      = excluded.adultos,
+          jovenes      = excluded.jovenes,
+          adolescentes = excluded.adolescentes,
+          ninos        = excluded.ninos,
+          visitas      = excluded.visitas,
+          total        = excluded.total,
+          serviceTime  = excluded.serviceTime
       `);
-      stmt.run(datos);
-      console.log('✅ Registro guardado en BD:', datos.serviceName);
+      stmt.run({ ...datos, fechaDia });
+      console.log('✅ Guardado/actualizado en BD:', datos.serviceName, fechaDia);
       return { success: true };
     } catch (error) {
       console.error('❌ Error al guardar en BD:', error);
@@ -315,6 +343,14 @@ app.whenReady().then(() => {
     } catch (error) {
       return { success: false, error: error.message };
     }
+  });
+
+  // Version de la app
+  ipcMain.handle('get-version', () => app.getVersion());
+
+  // Abrir URL en navegador externo
+  ipcMain.handle('open-external', (event, url) => {
+    shell.openExternal(url);
   });
 
   // Mostrar diálogo de selección de archivos

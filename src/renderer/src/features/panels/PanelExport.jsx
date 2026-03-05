@@ -40,6 +40,7 @@ export const PanelExport = ({
   onExportCurrent,
   onBatchExport,
   isExporting,
+  batchProgress = 0,
 }) => {
   const [selected, setSelected] = useState('png');
   const [exportedIds, setExportedIds] = useState([]);
@@ -131,8 +132,15 @@ export const PanelExport = ({
               disabled={isExporting}
             >
               <IoDownloadSharp />
-              {isExporting ? 'Exportando...' : `Descargar todos (${activeServices.length} slides)`}
+              {isExporting && batchProgress > 0
+                ? `Exportando... ${batchProgress}%`
+                : `Descargar todos (${activeServices.length + 1} slides)`}
             </button>
+            {isExporting && batchProgress > 0 && (
+              <div className="export-batch-progress">
+                <div className="export-batch-bar" style={{ width: `${batchProgress}%` }} />
+              </div>
+            )}
           </div>
         </>
       )}

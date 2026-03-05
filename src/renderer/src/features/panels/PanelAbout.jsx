@@ -1,32 +1,40 @@
 /**
- * PANEL: Acerca de
+ * PANEL: Acerca de — version dinamica desde package.json
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { MdGridOn } from 'react-icons/md';
-import { IoLogoGithub, IoOpenOutline } from 'react-icons/io5';
+import { IoLogoGithub } from 'react-icons/io5';
 import './PanelAbout.css';
 
-const VERSION = '1.2.0';
-
 export const PanelAbout = () => {
+  const [version, setVersion] = useState('...');
+
+  useEffect(() => {
+    window.api?.getVersion?.().then(v => { if (v) setVersion(v); });
+  }, []);
+
+  const handleGithub = () => {
+    window.api?.openExternal?.('https://github.com');
+  };
+
   return (
     <div className="panel-about">
       <div className="about-hero">
         <div className="about-hero__icon"><MdGridOn /></div>
         <h2 className="about-hero__name">ASIPUC</h2>
-        <span className="about-hero__version">v{VERSION}</span>
+        <span className="about-hero__version">v{version}</span>
       </div>
 
       <p className="about-desc">
-        Sistema de gestion de asistencia eclesiastica con generacion de slides
-        para proyeccion en cultos. Desarrollado para iglesias y congregaciones.
+        Sistema de gestión de asistencia eclesiástica con generación de slides
+        para proyección en cultos. Desarrollado para iglesias y congregaciones.
       </p>
 
       <div className="about-info">
         <div className="about-info__row">
-          <span>Version</span>
-          <strong>{VERSION}</strong>
+          <span>Versión</span>
+          <strong>v{version}</strong>
         </div>
         <div className="about-info__row">
           <span>Plataforma</span>
@@ -37,8 +45,8 @@ export const PanelAbout = () => {
           <strong>SQLite local</strong>
         </div>
         <div className="about-info__row">
-          <span>Exportacion</span>
-          <strong>PNG 1920x1080</strong>
+          <span>Exportación</span>
+          <strong>PNG 1920×1080</strong>
         </div>
       </div>
 
@@ -51,12 +59,9 @@ export const PanelAbout = () => {
         </div>
       </div>
 
-      <a
-        className="about-github"
-        onClick={() => window.api?.openExternal?.('https://github.com')}
-      >
+      <button className="about-github" onClick={handleGithub}>
         <IoLogoGithub /> Ver en GitHub
-      </a>
+      </button>
     </div>
   );
 };

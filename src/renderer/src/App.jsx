@@ -20,6 +20,7 @@ import './App.css';
 import './features/multi-service/components/MultiService.css';
 import { IoReloadSharp } from 'react-icons/io5';
 import { useToast } from './core/hooks/useToast';
+import { useBatchExport } from './features/multi-service/hooks/useBatchExport';
 import { ToastContainer } from './core/theme/ToastContainer';
 import { SideNavbar } from './core/theme/SideNavbar';
 import { SidePanel } from './core/theme/SidePanel';
@@ -39,6 +40,16 @@ const AppContent = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const { toasts, toast, removeToast } = useToast();
+
+  const { handleBatchExport, isExporting: isBatchExporting, progress: batchProgress } = useBatchExport({
+    services: multiService.services,
+    getFormattedData: multiService.getFormattedData,
+    getFormattedAccumulatedData: multiService.getFormattedAccumulatedData,
+    getServiceTotal: multiService.getServiceTotal,
+    accumulatedTotal: multiService.accumulatedTotal,
+    onSuccess: (msg) => toast.success('Exportación completa', msg),
+    onError:   (msg) => toast.error('Error al exportar', msg),
+  });
 
   const showSettings     = activePanel === 'settings';
   const showServiceManager = activePanel === 'services';
@@ -299,7 +310,9 @@ const AppContent = () => {
           getServiceTotal={multiService.getServiceTotal}
           accumulatedTotal={multiService.accumulatedTotal}
           onExportCurrent={handleExport}
-          isExporting={isExporting}
+          onBatchExport={handleBatchExport}
+          isExporting={isExporting || isBatchExporting}
+          batchProgress={batchProgress}
         />
       </SidePanel>
 

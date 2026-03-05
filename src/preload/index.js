@@ -20,6 +20,10 @@ const api = {
   // Recursos - Obtener rutas
   getResourcePath: (type, filename) => ipcRenderer.invoke('get-resource-path', type, filename),
   
+  // Version y sistema
+  getVersion:    () => ipcRenderer.invoke('get-version'),
+  openExternal:  (url) => ipcRenderer.invoke('open-external', url),
+
   // Diálogo de archivos
   showOpenDialog: (options) => ipcRenderer.invoke('show-open-dialog', options),
   
