@@ -15,22 +15,37 @@ import { ServiceTabs } from './features/multi-service/components/ServiceTabs';
 import { ServiceManager } from './features/multi-service/components/ServiceManager';
 import { BatchExport } from './features/multi-service/components/BatchExport';
 import { DEFAULT_RESOLUTION } from './core/config/constants';
-import { FaChartBar, FaListAlt } from "react-icons/fa";
+import { FaChartBar } from "react-icons/fa";
 import './App.css';
 import './features/multi-service/components/MultiService.css';
-import { IoReloadSharp, IoSettingsSharp } from 'react-icons/io5';
+import { IoReloadSharp } from 'react-icons/io5';
 import { useToast } from './core/hooks/useToast';
 import { ToastContainer } from './core/theme/ToastContainer';
+import { SideNavbar } from './core/theme/SideNavbar';
+import { SidePanel } from './core/theme/SidePanel';
+import { ConfirmModal } from './core/theme/ConfirmModal';
+import { PanelHistory } from './features/panels/PanelHistory';
+import { PanelStats } from './features/panels/PanelStats';
+import { PanelExport } from './features/panels/PanelExport';
+import { PanelAbout } from './features/panels/PanelAbout';
 
 const AppContent = () => {
   const multiService = useMultiService();
   const { exportImage, isExporting } = useImageExport();
 
-  const [showSettings, setShowSettings] = useState(false);
-  const [showServiceManager, setShowServiceManager] = useState(false);
+  const [activePanel, setActivePanel] = useState(null);
+  const [navExpanded, setNavExpanded] = useState(false);
   const [showAccumulated, setShowAccumulated] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
   const { toasts, toast, removeToast } = useToast();
+
+  const showSettings     = activePanel === 'settings';
+  const showServiceManager = activePanel === 'services';
+
+  const handlePanelChange = (panelId) => {
+    setActivePanel(prev => prev === panelId ? null : panelId);
+  };
 
   // Servicios con totales para la vista acumulada
   const dominicalServices = multiService.services
@@ -102,23 +117,12 @@ const AppContent = () => {
 
   return (
     <div className="app-container">
-      {/* Botón flotante de configuración */}
-      <button 
-        className="btn-settings-float"
-        onClick={() => setShowSettings(true)}
-        title="Configuración"
-      >
-        <IoSettingsSharp/>
-      </button>
-
-      {/* Botón flotante de gestión de servicios */}
-      <button 
-        className="btn-services-float"
-        onClick={() => setShowServiceManager(!showServiceManager)}
-        title="Gestionar Servicios"
-      >
-        <FaListAlt />
-      </button>
+      {/* Navbar lateral derecho */}
+      <SideNavbar
+        activePanel={activePanel}
+        onPanelChange={handlePanelChange}
+        onExpandChange={setNavExpanded}
+      />
 
       {/* Panel de control izquierdo */}
       <div className={`control-panel ${showSettings ? 'control-panel--hidden' : ''}`}>
@@ -213,9 +217,9 @@ const AppContent = () => {
 
         {/* Botones de utilidad */}
         <div className="utility-buttons">
-          <button 
+          <button
             className="btn-reset-all"
-            onClick={() => multiService.resetAll()}
+            onClick={() => setConfirmReset(true)}
           >
             <IoReloadSharp className='icon'/> Resetear Todo
           </button>
@@ -223,11 +227,14 @@ const AppContent = () => {
       </div>
 
       {/* Vista previa del slide */}
-      <div className={[
-        'slide-preview-container',
-        !showSettings && 'with-control-panel',
-        !showSettings && 'settings-closed'
-      ].filter(Boolean).join(' ')}>
+      <div
+        className={[
+          'slide-preview-container',
+          !showSettings && 'with-control-panel',
+          !showSettings && 'settings-closed'
+        ].filter(Boolean).join(' ')}
+        style={{ right: navExpanded ? '200px' : '60px' }}
+      >
         <SlidePreview
           data={currentData}
           total={currentTotal}
@@ -238,31 +245,84 @@ const AppContent = () => {
         />
       </div>
 
-      {/* Panel de gestión de servicios */}
-      {showServiceManager && (
-        <div className="service-manager-overlay">
-          <div className="service-manager-panel">
-            <button 
-              className="btn-close-manager"
-              onClick={() => setShowServiceManager(false)}
-            >
-              ✕
-            </button>
-            <ServiceManager
-              services={multiService.services}
-              onAddService={multiService.addService}
-              onRemoveService={multiService.removeService}
-              onUpdateService={multiService.updateService}
-              onToggleService={multiService.toggleService}
-            />
-          </div>
-        </div>
-      )}
+      {/* Panel: Gestionar Servicios */}
+      <SidePanel
+        title="Gestionar Servicios"
+        isOpen={activePanel === 'services'}
+        onClose={() => setActivePanel(null)}
+        navWidth={navExpanded ? 200 : 60}
+      >
+        <ServiceManager
+          services={multiService.services}
+          onAddService={multiService.addService}
+          onRemoveService={multiService.removeService}
+          onUpdateService={multiService.updateService}
+          onToggleService={multiService.toggleService}
+        />
+      </SidePanel>
 
-      {/* Panel de configuración */}
-      <SettingsPanel 
+      {/* Panel: Configuracion */}
+      <SettingsPanel
         isOpen={showSettings}
-        onClose={() => setShowSettings(false)}
+        onClose={() => setActivePanel(null)}
+      />
+
+      {/* Panel: Historial */}
+      <SidePanel
+        title="Historial de Registros"
+        isOpen={activePanel === 'history'}
+        onClose={() => setActivePanel(null)}
+        navWidth={navExpanded ? 200 : 60}
+      >
+        <PanelHistory />
+      </SidePanel>
+
+      {/* Panel: Estadisticas */}
+      <SidePanel
+        title="Estadisticas"
+        isOpen={activePanel === 'stats'}
+        onClose={() => setActivePanel(null)}
+        navWidth={navExpanded ? 200 : 60}
+      >
+        <PanelStats />
+      </SidePanel>
+
+      {/* Panel: Exportacion */}
+      <SidePanel
+        title="Exportacion"
+        isOpen={activePanel === 'export'}
+        onClose={() => setActivePanel(null)}
+        navWidth={navExpanded ? 200 : 60}
+      >
+        <PanelExport
+          services={multiService.services}
+          getServiceTotal={multiService.getServiceTotal}
+          accumulatedTotal={multiService.accumulatedTotal}
+          onExportCurrent={handleExport}
+          isExporting={isExporting}
+        />
+      </SidePanel>
+
+      {/* Panel: Acerca de */}
+      <SidePanel
+        title="Acerca de ASIPUC"
+        isOpen={activePanel === 'about'}
+        onClose={() => setActivePanel(null)}
+        navWidth={navExpanded ? 200 : 60}
+      >
+        <PanelAbout />
+      </SidePanel>
+
+      {/* Modal confirmacion resetear */}
+      <ConfirmModal
+        isOpen={confirmReset}
+        title="Resetear todos los datos"
+        message="Se borrarán los conteos de todos los servicios del día. Esta acción no se puede deshacer."
+        confirmLabel="Sí, resetear"
+        cancelLabel="Cancelar"
+        variant="danger"
+        onConfirm={() => { multiService.resetAll(); setConfirmReset(false); toast.success('Datos reseteados', 'Todos los conteos fueron a cero.'); }}
+        onCancel={() => setConfirmReset(false)}
       />
 
       {/* Notificaciones toast */}

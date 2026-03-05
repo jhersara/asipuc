@@ -17,7 +17,9 @@ db.exec(`
     fecha TEXT,
     ancianos INTEGER, adultos INTEGER, jovenes INTEGER,
     adolescentes INTEGER, ninos INTEGER, visitas INTEGER,
-    total INTEGER
+    total INTEGER,
+    serviceName TEXT,
+    serviceTime TEXT
   )
 `);
 
@@ -142,16 +144,41 @@ app.whenReady().then(() => {
   // IPC HANDLERS - BASE DE DATOS
   // ========================================
   
-  ipcMain.on('guardar-datos', (event, datos) => {
+  ipcMain.handle('guardar-datos', (event, datos) => {
     try {
       const stmt = db.prepare(`
-        INSERT INTO asistencia (fecha, ancianos, adultos, jovenes, adolescentes, ninos, visitas, total)
-        VALUES (@fecha, @ancianos, @adultos, @jovenes, @adolescentes, @ninos, @visitas, @total)
+        INSERT INTO asistencia (fecha, ancianos, adultos, jovenes, adolescentes, ninos, visitas, total, serviceName, serviceTime)
+        VALUES (@fecha, @ancianos, @adultos, @jovenes, @adolescentes, @ninos, @visitas, @total, @serviceName, @serviceTime)
       `);
       stmt.run(datos);
-      console.log("✅ Registro guardado en BD");
+      console.log('✅ Registro guardado en BD:', datos.serviceName);
+      return { success: true };
     } catch (error) {
-      console.error("❌ Error al guardar en BD:", error);
+      console.error('❌ Error al guardar en BD:', error);
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle('get-historial', () => {
+    try {
+      const rows = db.prepare(`
+        SELECT * FROM asistencia
+        ORDER BY fecha DESC
+        LIMIT 100
+      `).all();
+      return { success: true, data: rows };
+    } catch (error) {
+      console.error('❌ Error leyendo historial:', error);
+      return { success: false, data: [] };
+    }
+  });
+
+  ipcMain.handle('delete-historial-item', (event, id) => {
+    try {
+      db.prepare('DELETE FROM asistencia WHERE id = ?').run(id);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
     }
   });
 

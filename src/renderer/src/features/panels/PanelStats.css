@@ -1,0 +1,65 @@
+/* Estadisticas */
+.panel-stats { display: flex; flex-direction: column; gap: 16px; }
+.stats-subtitle { font-size: 12px; color: rgba(255,255,255,0.35); }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.stats-card {
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.stats-card span { font-size: 11px; color: rgba(255,255,255,0.45); }
+.stats-card strong { font-size: 28px; font-weight: 800; }
+
+.stats-card--blue   { background: rgba(0,123,255,0.12); }
+.stats-card--blue strong   { color: #5b9ef9; }
+.stats-card--green  { background: rgba(40,167,69,0.12); }
+.stats-card--green strong  { color: #5dd879; }
+.stats-card--yellow { background: rgba(255,193,7,0.12); }
+.stats-card--yellow strong { color: #ffd04d; }
+.stats-card--red    { background: rgba(220,53,69,0.12); }
+.stats-card--red strong    { color: #f77; }
+
+.stats-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.35);
+  margin-top: 4px;
+}
+
+.stats-bars { display: flex; flex-direction: column; gap: 10px; }
+
+.stats-bar__label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 4px;
+  color: rgba(255,255,255,0.6);
+}
+
+.stats-bar__label strong { color: #fff; }
+
+.stats-bar__track {
+  height: 6px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.stats-bar__fill {
+  height: 100%;
+  background: linear-gradient(90deg, #007bff, #5b9ef9);
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}

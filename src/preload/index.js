@@ -4,7 +4,9 @@ import { electronAPI } from '@electron-toolkit/preload'
 // Custom APIs for renderer
 const api = {
   // Asistencia
-  guardarAsistencia: (datos) => ipcRenderer.send('guardar-datos', datos),
+  guardarAsistencia: (datos) => ipcRenderer.invoke('guardar-datos', datos),
+  getHistorial: () => ipcRenderer.invoke('get-historial'),
+  deleteHistorialItem: (id) => ipcRenderer.invoke('delete-historial-item', id),
   
   // Recursos - Escaneo
   scanResources: () => ipcRenderer.invoke('scan-resources'),

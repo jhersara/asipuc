@@ -182,10 +182,7 @@ export const useMultiService = () => {
    * Eliminar servicio
    */
   const removeService = useCallback((serviceId) => {
-    if (services.length <= 1) {
-      alert('Debe haber al menos un servicio');
-      return;
-    }
+    if (services.length <= 1) return; // mínimo 1 servicio, el UI maneja el aviso
 
     setServices(prev => prev.filter(s => s.id !== serviceId));
     
