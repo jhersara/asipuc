@@ -10,31 +10,33 @@ import path from 'path'
 const dbPath = join(app.getPath('userData'), 'iglesia_database.sqlite');
 const db = new Database(dbPath);
 
-// Crear tabla si no existe
+// Crear tabla base si no existe (sin UNIQUE todavia)
 db.exec(`
   CREATE TABLE IF NOT EXISTS asistencia (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     fecha TEXT,
     ancianos INTEGER, adultos INTEGER, jovenes INTEGER,
     adolescentes INTEGER, ninos INTEGER, visitas INTEGER,
-    total INTEGER,
-    serviceName TEXT,
-    serviceTime TEXT,
-    fechaDia TEXT,
-    UNIQUE(fechaDia, serviceName)
+    total INTEGER
   )
 `);
 
-// Agregar columnas nuevas si la BD ya existia (migracion segura)
+// Migracion segura: agregar columnas nuevas si no existen
+['serviceName TEXT', 'serviceTime TEXT', 'fechaDia TEXT'].forEach(col => {
+  try { db.exec(`ALTER TABLE asistencia ADD COLUMN ${col}`); } catch (_) {}
+});
+
+// Migracion: rellenar fechaDia en registros antiguos que lo tengan vacio
+db.exec(`
+  UPDATE asistencia
+  SET fechaDia = substr(fecha, 1, 10)
+  WHERE fechaDia IS NULL OR fechaDia = ''
+`);
+
+// Migracion: crear indice UNIQUE si no existe (equivalente a la constraint)
 try {
-  db.exec(`ALTER TABLE asistencia ADD COLUMN serviceName TEXT`);
-} catch (_) { /* ya existe */ }
-try {
-  db.exec(`ALTER TABLE asistencia ADD COLUMN serviceTime TEXT`);
-} catch (_) { /* ya existe */ }
-try {
-  db.exec(`ALTER TABLE asistencia ADD COLUMN fechaDia TEXT`);
-} catch (_) { /* ya existe */ }
+  db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_dia_servicio ON asistencia (fechaDia, serviceName)`);
+} catch (_) {}
 
 // Rutas de recursos
 const RESOURCES_PATH = is.dev
