@@ -1,0 +1,403 @@
+import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
+import { join } from 'path'
+import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import icon from '../../resources/icon.png?asset'
+import Database from 'better-sqlite3'
+import fs from 'fs'
+import path from 'path'
+
+// Configurar Base de datos
+const dbPath = join(app.getPath('userData'), 'iglesia_database.sqlite');
+const db = new Database(dbPath);
+
+// Crear tabla base si no existe (sin UNIQUE todavia)
+db.exec(`
+  CREATE TABLE IF NOT EXISTS asistencia (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fecha TEXT,
+    ancianos INTEGER, adultos INTEGER, jovenes INTEGER,
+    adolescentes INTEGER, ninos INTEGER, visitas INTEGER,
+    total INTEGER
+  )
+`);
+
+// Migracion segura: agregar columnas nuevas si no existen
+['serviceName TEXT', 'serviceTime TEXT', 'fechaDia TEXT'].forEach(col => {
+  try { db.exec(`ALTER TABLE asistencia ADD COLUMN ${col}`); } catch (_) {}
+});
+
+// Migracion: rellenar fechaDia en registros antiguos que lo tengan vacio
+db.exec(`
+  UPDATE asistencia
+  SET fechaDia = substr(fecha, 1, 10)
+  WHERE fechaDia IS NULL OR fechaDia = ''
+`);
+
+// Migracion: crear indice UNIQUE si no existe (equivalente a la constraint)
+try {
+  db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_dia_servicio ON asistencia (fechaDia, serviceName)`);
+} catch (_) {}
+
+// Rutas de recursos
+const RESOURCES_PATH = is.dev
+  ? join(process.cwd(), 'resources')
+  : join(process.resourcesPath, 'resources');
+
+const SYSTEM_ASSETS_PATH = join(RESOURCES_PATH, 'assets');
+const USER_UPLOADS_PATH = join(RESOURCES_PATH, 'user-uploads');
+
+// Crear directorios si no existen
+const ensureDirectories = () => {
+  const dirs = [
+    join(SYSTEM_ASSETS_PATH, 'fonts'),
+    join(SYSTEM_ASSETS_PATH, 'backgrounds'),
+    join(SYSTEM_ASSETS_PATH, 'logos'),
+    join(USER_UPLOADS_PATH, 'fonts'),
+    join(USER_UPLOADS_PATH, 'backgrounds'),
+    join(USER_UPLOADS_PATH, 'logos')
+  ];
+
+  dirs.forEach(dir => {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  });
+};
+
+// Mime type según extensión
+const getMimeType = (filename) => {
+  const ext = path.extname(filename).toLowerCase();
+  const map = {
+    '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
+    '.png': 'image/png', '.webp': 'image/webp',
+    '.svg': 'image/svg+xml',
+    '.ttf': 'font/ttf', '.otf': 'font/otf',
+    '.woff': 'font/woff', '.woff2': 'font/woff2'
+  };
+  return map[ext] || 'application/octet-stream';
+};
+
+// Escanear recursos — devuelve base64 para imágenes, file:// para fuentes
+const scanResourcesInDirectory = (dirPath, extensions) => {
+  if (!fs.existsSync(dirPath)) return [];
+
+  try {
+    return fs.readdirSync(dirPath)
+      .filter(file => extensions.includes(path.extname(file).toLowerCase()))
+      .map(file => {
+        const filePath = join(dirPath, file);
+        const mime = getMimeType(file);
+        // Para imágenes y logos, devolver base64 directamente
+        if (mime.startsWith('image/')) {
+          try {
+            const data = fs.readFileSync(filePath).toString('base64');
+            return {
+              name: file,
+              path: filePath,
+              url: `data:${mime};base64,${data}`
+            };
+          } catch {
+            return null;
+          }
+        }
+        // Para fuentes usar file://
+        return {
+          name: file,
+          path: filePath,
+          url: `file://${filePath.replace(/\\/g, '/')}`
+        };
+      })
+      .filter(Boolean);
+  } catch (error) {
+    console.error('Error escaneando directorio:', error);
+    return [];
+  }
+};
+
+function createWindow() {
+  const mainWindow = new BrowserWindow({
+    width: 1600,
+    height: 900,
+    show: false,
+    autoHideMenuBar: true,
+    title: `ASIPUC v${app.getVersion()}`,
+    ...(process.platform === 'linux' ? { icon } : {}),
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.js'),
+      sandbox: false,
+      nodeIntegration: false,
+      contextIsolation: true
+    }
+  })
+
+  mainWindow.on('ready-to-show', () => {
+    mainWindow.show()
+  })
+
+  mainWindow.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url)
+    return { action: 'deny' }
+  })
+
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+  } else {
+    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+  }
+}
+
+app.whenReady().then(() => {
+  electronApp.setAppUserModelId('com.electron')
+
+  app.on('browser-window-created', (_, window) => {
+    optimizer.watchWindowShortcuts(window)
+  })
+
+  // Crear directorios
+  ensureDirectories();
+
+  // ========================================
+  // IPC HANDLERS - BASE DE DATOS
+  // ========================================
+  
+  ipcMain.handle('guardar-datos', (event, datos) => {
+    try {
+      // fechaDia = solo la fecha sin hora, para detectar duplicados del mismo dia
+      const fechaDia = new Date(datos.fecha).toISOString().split('T')[0];
+      const stmt = db.prepare(`
+        INSERT INTO asistencia
+          (fecha, ancianos, adultos, jovenes, adolescentes, ninos, visitas, total, serviceName, serviceTime, fechaDia)
+        VALUES
+          (@fecha, @ancianos, @adultos, @jovenes, @adolescentes, @ninos, @visitas, @total, @serviceName, @serviceTime, @fechaDia)
+        ON CONFLICT(fechaDia, serviceName) DO UPDATE SET
+          fecha        = excluded.fecha,
+          ancianos     = excluded.ancianos,
+          adultos      = excluded.adultos,
+          jovenes      = excluded.jovenes,
+          adolescentes = excluded.adolescentes,
+          ninos        = excluded.ninos,
+          visitas      = excluded.visitas,
+          total        = excluded.total,
+          serviceTime  = excluded.serviceTime
+      `);
+      stmt.run({ ...datos, fechaDia });
+      console.log('✅ Guardado/actualizado en BD:', datos.serviceName, fechaDia);
+      return { success: true };
+    } catch (error) {
+      console.error('❌ Error al guardar en BD:', error);
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle('get-historial', () => {
+    try {
+      const rows = db.prepare(`
+        SELECT * FROM asistencia
+        ORDER BY fecha DESC
+        LIMIT 100
+      `).all();
+      return { success: true, data: rows };
+    } catch (error) {
+      console.error('❌ Error leyendo historial:', error);
+      return { success: false, data: [] };
+    }
+  });
+
+  ipcMain.handle('delete-historial-item', (event, id) => {
+    try {
+      db.prepare('DELETE FROM asistencia WHERE id = ?').run(id);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  // ========================================
+  // IPC HANDLERS - RECURSOS
+  // ========================================
+
+  // Escanear todos los recursos disponibles
+  ipcMain.handle('scan-resources', async () => {
+    try {
+      const resources = {
+        system: {
+          fonts: scanResourcesInDirectory(
+            join(SYSTEM_ASSETS_PATH, 'fonts'),
+            ['.ttf', '.otf', '.woff', '.woff2']
+          ),
+          backgrounds: scanResourcesInDirectory(
+            join(SYSTEM_ASSETS_PATH, 'backgrounds'),
+            ['.jpg', '.jpeg', '.png', '.webp']
+          ),
+          logos: scanResourcesInDirectory(
+            join(SYSTEM_ASSETS_PATH, 'logos'),
+            ['.png', '.svg']
+          )
+        },
+        user: {
+          fonts: scanResourcesInDirectory(
+            join(USER_UPLOADS_PATH, 'fonts'),
+            ['.ttf', '.otf', '.woff', '.woff2']
+          ),
+          backgrounds: scanResourcesInDirectory(
+            join(USER_UPLOADS_PATH, 'backgrounds'),
+            ['.jpg', '.jpeg', '.png', '.webp']
+          ),
+          logos: scanResourcesInDirectory(
+            join(USER_UPLOADS_PATH, 'logos'),
+            ['.png', '.svg']
+          )
+        }
+      };
+
+      console.log('✅ Recursos escaneados:', resources);
+      return resources;
+    } catch (error) {
+      console.error('❌ Error escaneando recursos:', error);
+      return { system: {}, user: {} };
+    }
+  });
+
+  // Guardar recurso del usuario
+  ipcMain.handle('save-user-resource', async (event, { name, type, data }) => {
+    try {
+      // Determinar carpeta según tipo
+      const typeFolder = type === 'font' ? 'fonts' : 
+                        type === 'background' ? 'backgrounds' : 
+                        type === 'logo' ? 'logos' : null;
+
+      if (!typeFolder) {
+        throw new Error('Tipo de recurso no válido');
+      }
+
+      const targetDir = join(USER_UPLOADS_PATH, typeFolder);
+      const targetPath = join(targetDir, name);
+
+      // Convertir base64 a buffer
+      const base64Data = data.replace(/^data:image\/\w+;base64,/, '');
+      const buffer = Buffer.from(base64Data, 'base64');
+
+      // Guardar archivo
+      fs.writeFileSync(targetPath, buffer);
+
+      console.log(`✅ Recurso guardado: ${name}`);
+
+      // Devolver base64 para que el renderer pueda usarlo directamente
+      const mime = getMimeType(name);
+      const savedData = fs.readFileSync(targetPath).toString('base64');
+
+      return {
+        success: true,
+        resource: {
+          name,
+          path: targetPath,
+          url: `data:${mime};base64,${savedData}`
+        }
+      };
+    } catch (error) {
+      console.error('❌ Error guardando recurso:', error);
+      return { success: false, error: error.message };
+    }
+  });
+
+  // Eliminar recurso del usuario
+  ipcMain.handle('delete-user-resource', async (event, { path, type }) => {
+    try {
+      if (fs.existsSync(path)) {
+        fs.unlinkSync(path);
+        console.log(`✅ Recurso eliminado: ${path}`);
+        return { success: true };
+      } else {
+        return { success: false, error: 'Archivo no encontrado' };
+      }
+    } catch (error) {
+      console.error('❌ Error eliminando recurso:', error);
+      return { success: false, error: error.message };
+    }
+  });
+
+  // Obtener ruta de recurso
+  ipcMain.handle('get-resource-path', async (event, type, filename) => {
+    try {
+      const typeFolder = type === 'font' ? 'fonts' : 
+                        type === 'background' ? 'backgrounds' : 
+                        type === 'logo' ? 'logos' : null;
+
+      if (!typeFolder) {
+        throw new Error('Tipo no válido');
+      }
+
+      // Buscar primero en user uploads, luego en system assets
+      let resourcePath = join(USER_UPLOADS_PATH, typeFolder, filename);
+      if (!fs.existsSync(resourcePath)) {
+        resourcePath = join(SYSTEM_ASSETS_PATH, typeFolder, filename);
+      }
+
+      if (fs.existsSync(resourcePath)) {
+        return {
+          success: true,
+          path: resourcePath,
+          url: `file://${resourcePath.replace(/\\/g, '/')}`
+        };
+      }
+
+      return { success: false, error: 'Archivo no encontrado' };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  // Version de la app
+  ipcMain.handle('get-version', () => app.getVersion());
+
+  // Abrir URL en navegador externo
+  ipcMain.handle('open-external', (event, url) => {
+    shell.openExternal(url);
+  });
+
+  // Mostrar diálogo de selección de archivos
+  ipcMain.handle('show-open-dialog', async (event, options) => {
+    try {
+      const result = await dialog.showOpenDialog(options);
+      return result;
+    } catch (error) {
+      console.error('Error en diálogo:', error);
+      return { canceled: true };
+    }
+  });
+
+  // Leer archivo
+  ipcMain.handle('read-file', async (event, filePath) => {
+    try {
+      const data = fs.readFileSync(filePath);
+      return {
+        success: true,
+        data: data.toString('base64')
+      };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  // Escribir archivo
+  ipcMain.handle('write-file', async (event, filePath, data) => {
+    try {
+      fs.writeFileSync(filePath, data);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  createWindow()
+
+  app.on('activate', function () {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  })
+})
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+})
