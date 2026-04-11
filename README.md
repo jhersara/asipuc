@@ -24,7 +24,7 @@ Aplicacion de escritorio para la gestion y visualizacion de asistencia eclesiast
 ## Instalacion
 
 ```bash
-git clone https://github.com/TU_USUARIO/asipuc.git
+git clone https://github.com/jhersara/asipuc.git
 cd asipuc
 npm install
 ```
